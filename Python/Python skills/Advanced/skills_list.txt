@@ -1,0 +1,11 @@
+Done : Generators
+Decorators
+Context managers (ex 'with')
+Metaclasses
+
+Concurrency
+Parallelism
+
+Testing
+Build and manipulates packages
+Cython

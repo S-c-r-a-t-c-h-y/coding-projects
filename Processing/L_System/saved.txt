@@ -1,0 +1,43 @@
+Turle2D(axiom=+K, rules={'B': 'N', 'C': 'P', 'F': 'C', 'K': '-F', 'N': '-C', 'P': 'C+F[NKNC+FKK-N+PK+FB+P--]PKP'},
+step=10, angle=19.9999980927, drawn_variables=['N', 'K', 'B', 'C', 'F'], shrinking_coeff=1,
+stroke_weight=1, bg_color=51, x=300, y=300, color=-1)
+
+Turle2D(axiom=[HZ-R-BS+Z-SHGGSH+DR+-]D, rules={'B': '[H-DBDBZDHGZRSR+ZHRD+HDRZ-RG]BGD', 'D': '[DRSG+BH-+ZDRSBH-HD+Z]', 'G': 'H-DBRDRG', 'H': 'RDD+G', 'R': 'H-', 'S': 'DB', 'Z': 'GD-'},
+step=10, angle=12.9999990463, drawn_variables=['R', 'S', 'H', 'B', 'Z', 'G'], shrinking_coeff=1,
+stroke_weight=1, bg_color=51, x=300, y=300, color=-1)
+
+Turle2D(axiom=-[]-[+]-+U, rules={'U': '-[UUU-+U]+U[-U--++-++U+UU-]++-'},
+step=10, angle=60.0, drawn_variables=['U'], shrinking_coeff=1,
+stroke_weight=1, bg_color=51, x=300, y=300, color=-1)
+
+Turle2D(axiom=-+++[+K]+K, rules={'K': '[UUK+UUKU+UK]+K-', 'U': 'UK[+KK+-+K]K'},
+step=10, angle=9.99999904633, drawn_variables=['K', 'U'], shrinking_coeff=1,
+stroke_weight=1, bg_color=51, x=300, y=300, color=-1)
+
+Turle2D(axiom=VV-, rules={'B': 'V', 'H': 'H', 'O': '[-HBYW+TWOT-WOZHZBHOWT+Y][+-VV]-B', 'T': 'OWVH', 'V': 'BWWY', 'W': 'OWT[+VWWHTYT]B', 'Y': '+O+BVH+', 'Z': 'Y'},
+step=10, angle=9.99999904633, drawn_variables=['Y', 'Z', 'O', 'T', 'W'], shrinking_coeff=1,
+stroke_weight=1, bg_color=51, x=300, y=300, color=-1)
+
+Turle2D(axiom=W, rules={'A': '-++IP', 'I': '-W', 'P': 'PIP[PWI-W]+[-PW]AAI[I++I+]A+', 'W': 'P'},
+step=10, angle=90.0, drawn_variables=['A', 'W', 'P', 'I'], shrinking_coeff=1,
+stroke_weight=1, bg_color=51, x=300, y=300, color=-1)
+
+Turle2D(axiom=++P-Q, rules={'P': '-+Q', 'Q': 'Q[+PPQ-QPPP+Q]Q'},
+step=10, angle=54.9999961853, drawn_variables=['Q'], shrinking_coeff=1,
+stroke_weight=1, bg_color=51, x=300, y=300, color=-1)
+
+Turle2D(axiom=-ZGZGFYR+G, rules={'B': '[LLFG+Z+LG]', 'F': 'F+LFGR', 'G': '[++B+G]B', 'L': 'L', 'R': 'R', 'Y': '-+L', 'Z': 'R-'},
+step=10, angle=15.0, drawn_variables=['L', 'B', 'R', 'Y'], shrinking_coeff=1,
+stroke_weight=1, bg_color=51, x=300, y=300, color=-1)
+
+Turle2D(axiom=RQWQW[VW]WQ++[XOW][WRRV-VQXROH]O[OVQOO-]QQ, rules={'H': '+W', 'O': 'WRQQ', 'Q': 'WWRV', 'R': 'XVORQW[+OQ+QRHQOWQQO-]WW', 'V': 'X+', 'W': 'X', 'X': '[--O]'},
+step=10, angle=90.0, drawn_variables=['X', 'Q', 'O', 'H', 'R', 'V'], shrinking_coeff=1,
+stroke_weight=1, bg_color=51, x=300, y=300, color=-1)
+
+Turle2D(axiom=[][++-][]U-U-, rules={'U': '+-U[-UU-]U'},
+step=10, angle=84.9999923706, drawn_variables=['U'], shrinking_coeff=1,
+stroke_weight=1, bg_color=51, x=300, y=300, color=-1)
+
+Turle2D(axiom=+---[---N][], rules={'N': '+-[-]-N-[+N-N--][]'},
+step=10, angle=4.99999952316, drawn_variables=['N'], shrinking_coeff=1,
+stroke_weight=1, bg_color=51, x=300, y=300, color=-1)

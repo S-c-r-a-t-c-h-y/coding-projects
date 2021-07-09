@@ -1,0 +1,14 @@
+Done : Comprehension (list, dictionnary) 
+Done : Lambda (cf lambda.py)
+Done : Map and Filter
+Done : *args and **kwargs
+Done : PIP
+Done ~ : Module creation
+Done : Collections Module (cf collection_module.py)
+
+Inheritance
+Advanced class behaviour (dunder methods etc...)
+Environments (Anaconda, ...)
+Async IO
+
+Datastructures

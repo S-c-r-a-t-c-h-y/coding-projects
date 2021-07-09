@@ -1,0 +1,55 @@
+https://realpython.com/python-data-structures/
+
+
+Dictionaries:
+	- python dict
+	- collections.OrderedDict
+	- collections.dafaultdict
+	- collections.ChainMap4
+	- types.MappingProxyType (read only dicts)
+
+
+Array:
+	- python list (mutable)
+	- python tuple (immutable)
+	- array.array (similar to lists but are TYPED ARRAYS)
+	- python str (immutable)
+	- python bytes (immutable)
+	- python bytearray (mutable)
+
+
+Records, structs and data transfer objects:
+	- python dict
+	- python tuple
+	- classes
+	- dataclasses.dataclass
+	- collections.namedtuple
+	- typing.NamedTuple (immutable)
+	- struct.Struct
+	- types.SimpleNamespace
+
+
+Sets and Multisets:
+	- python set (mutable)
+	- python frozenset (immutable)
+	- collections.Counter
+
+
+Stacks (LIFO):
+	- python list
+	- collections.deque
+	- queue.LifoQueue (Parallel Computing)
+
+
+Queues (FIFO):
+	- python list (not recommended because very SLOW)
+	- collections.deque
+	- queue.Queue (Parallel Computing)
+	- multiprocessing.Queue (Parallel Computing)
+
+
+Priority Queues:
+	- python list (slow)
+	- heapq
+	- queue.PriorityQueue
+	- 
