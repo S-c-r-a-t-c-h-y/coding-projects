@@ -35,3 +35,9 @@
 .Trashes
 ehthumbs.db
 Thumbs.db
+
+### Node.JS ###
+.DS_Store
+/config.js
+node_modules
+.env
