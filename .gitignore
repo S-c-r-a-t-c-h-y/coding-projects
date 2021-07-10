@@ -3,7 +3,6 @@
 *.com
 *.class
 *.dll
-*.exe
 *.o
 *.so
 
@@ -23,18 +22,25 @@
 # Logs and databases #
 ######################
 *.log
-# *.sql
-# *.sqlite
+*.sql
+*.sqlite
+*.sqlite3
 
 # OS generated files #
 ######################
 .DS_Store
 .DS_Store?
 ._*
+.__*
 .Spotlight-V100
 .Trashes
 ehthumbs.db
 Thumbs.db
+
+# Python generated folders #
+############################
+__pycache__
+.mypy_cache
 
 ### Node.JS ###
 .DS_Store
