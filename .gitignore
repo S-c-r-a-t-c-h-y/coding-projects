@@ -6,6 +6,7 @@
 *.o
 *.so
 *.pyc
+*.exe
 
 # Packages #
 ############
@@ -15,10 +16,10 @@
 *.dmg
 *.gz
 *.iso
-*.jar
 *.rar
 *.tar
 *.zip
+*.jar
 
 # Logs and databases #
 ######################
