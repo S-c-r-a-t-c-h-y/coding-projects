@@ -1,11 +1,14 @@
 from tkinter import *
 import tkinter.messagebox
 import time
+import os
 from playsound import playsound
 from typing import Union, List, Optional, Callable
 from random import choice
 from Astar import *
 
+
+WIDTH, HEIGHT = 380, 440
 scale = 20
 Pos = List[int]
 
@@ -592,7 +595,7 @@ def create_ghost(name: str) -> None:
 
 def setup() -> None:
 
-    global balls, powers, ghosts, inky, blinky, pinky, clyde
+    global balls, powers, ghosts
 
     pacman.pos = [180, 320]
     balls = []
@@ -641,21 +644,11 @@ def setup() -> None:
 
 def main() -> None:
 
-    global top, width, height
-    width, height = 380, 440
-
-    top = Tk()
-    top.title("PacMan")
-    #30x22
-    top.geometry(f'{width+5}x{height+60}')
-    top.configure(bg='black')
-    top.resizable(width=False, height=False)
-
     global canvas, pacman, score_label, balls, powers, framecount, delay, invincible_time, difficulty
     global idle, right, left, up, down
     global inky_img, pinky_img, blinky_img, clyde_img, vulnerable, eyes_img
 
-    canvas = Canvas(top, width=width, height=height, bg='grey10', bd=0)
+    canvas = Canvas(top, width=WIDTH, height=HEIGHT, bg='grey10', bd=0)
     canvas.place(x=0, y=30)
 
     pacman = Pacman([300, 300])
@@ -665,21 +658,21 @@ def main() -> None:
     difficulty = 4
     invincible_time = 5
 
+    current_dir = os.getcwd()
     # creating every photo image
-    idle = PhotoImage(file = "sprites/idle.PNG")
-    up = PhotoImage(file = "sprites/up.PNG")
-    right = PhotoImage(file = "sprites/right.PNG")
-    down = PhotoImage(file = "sprites/down.PNG")
-    left = PhotoImage(file = "sprites/left.PNG")
+    idle = PhotoImage(file=f"{current_dir}\\sprites\\idle.png")
+    up = PhotoImage(file=f"{current_dir}\\sprites\\up.png")
+    right = PhotoImage(file=f"{current_dir}\\sprites\\right.png")
+    down = PhotoImage(file=f"{current_dir}\\sprites\\down.png")
+    left = PhotoImage(file=f"{current_dir}\\sprites\\left.png")
 
-    inky_img = PhotoImage(file = "sprites/inky.png")
-    pinky_img = PhotoImage(file = "sprites/pinky.png")
-    blinky_img = PhotoImage(file = "sprites/blinky.png")
-    clyde_img = PhotoImage(file = "sprites/clyde.png")
-    vulnerable = PhotoImage(file = "sprites/vulnerable.png")
-    eyes_img = PhotoImage(file = "sprites/eyes.png")
+    inky_img = PhotoImage(file=f"{current_dir}\\sprites\\inky.png")
+    pinky_img = PhotoImage(file=f"{current_dir}\\sprites\\pinky.png")
+    blinky_img = PhotoImage(file=f"{current_dir}\\sprites\\blinky.png")
+    clyde_img = PhotoImage(file=f"{current_dir}\\sprites\\clyde.png")
+    vulnerable = PhotoImage(file=f"{current_dir}\\sprites\\vulnerable.png")
+    eyes_img = PhotoImage(file=f"{current_dir}\\sprites\\eyes.png")
     
-
     create_walls()
     setup()
 
@@ -697,4 +690,10 @@ def main() -> None:
     top.mainloop()
 
 if __name__ == '__main__':
+    top = Tk()
+    top.title("PacMan")
+    top.geometry(f'{WIDTH+5}x{HEIGHT+60}') #30x22
+    top.configure(bg='black')
+    top.resizable(width=False, height=False)
+    
     main()

@@ -33,7 +33,6 @@ def get_pixel_colour(i_x, i_y):
 
 # ------------------------------------------------------------------------------------------------------------------
 
-
 def get_pixel_color():
 
     global current_color
@@ -50,7 +49,6 @@ def get_pixel_color():
     top.after(60, get_pixel_color)
 
 # ------------------------------------------------------------------------------------------------------------------
-
 
 def main():
 
@@ -79,4 +77,3 @@ if __name__ == '__main__':
     old = change_cursor('crosshair2.cur')
     main()
     change_cursor(old)
-    

@@ -28,7 +28,7 @@ async def random(ctx, *args):
 @bot.command()
 @commands.guild_only()
 @commands.has_permissions(ban_members=True)
-async def ban(ctx, users: commands.Greedy[discord.User], *, reason = "No reason specified"):
+async def ban(ctx, users: commands.Greedy[discord.User], *, reason="No reason specified"):
 	for user in users:
 		try:
 			await ctx.guild.ban(user, reason=reason)
@@ -36,11 +36,10 @@ async def ban(ctx, users: commands.Greedy[discord.User], *, reason = "No reason 
 		except:
 			await ctx.send('I could not find the user you were searching for ...')
 
-
 @bot.command()
 @commands.guild_only()
 @commands.has_permissions(ban_members=True)
-async def unban(ctx, user, *, reason = "No reason specified"):
+async def unban(ctx, user, *, reason="No reason specified"):
 	user_name, user_id = user.split('#')
 	banned_users = await ctx.guild.bans()
 	for banned_user in banned_users:
@@ -49,7 +48,6 @@ async def unban(ctx, user, *, reason = "No reason specified"):
 			await ctx.send(f'{user} has been unbanned for the reason : *{reason}*.')
 			return
 	await ctx.send('I could not find the user you were searching for ...')
-
 
 @bot.command()
 @commands.guild_only()
@@ -76,7 +74,7 @@ async def clear(ctx, nb: int):
 async def get_muted_role(ctx):
 
 		async def create_muted_role(ctx):
-			muted_role = await ctx.guild.create_role(name='muted', permissions=discord.Permissons(
+			muted_role = await ctx.guild.create_role(name='muted', permissions=discord.Permissions(
 													send_messages=False,
 													speak=False),
 													reason="Created a new muted role to mute people with the 'mute' command")
@@ -92,14 +90,12 @@ async def get_muted_role(ctx):
 
 # --------------------------------------------------------------------------------------------------------
 
-
 @bot.command()
 @commands.has_permissions(deafen_members=True)
 async def mute(ctx, member: discord.Member, *, reason = "No reason specified"):
 	muted_role = await get_muted_role(ctx)
 	await member.add_roles(muted_role, reason=reason)
 	await ctx.send(f"{member.mention} got muted !")
-
 
 @bot.command()
 @commands.has_permissions(deafen_members=True)
@@ -111,33 +107,6 @@ async def unmute(ctx, member: discord.Member, *, reason = "No reason specified")
 @bot.command()
 async def id(ctx, *, member: discord.Member):
 	await ctx.send(f'{member.mention}: id = {member.id}')
-
-@bot.command()
-async def modify(ctx, *args):
-	if ctx.channel.id != 850806578125864981:
-		pass
-	if True:
-		sets = [] # stocking every sets found
-		subset = [] #I call a 'set' a pair of brackets
-
-		for arg in args:
-			if arg == 'g.basic': # append the set you wanted
-				sets.append([18.25, 1.4, .1, 1, 2, .2, 1, 4.5, 1, 1, 1, 15, 1])
-				continue # go directly to the next iteration without finishing the loop
-
-			subset.append(float(''.join([car for car in arg if car.isnumeric() or car == '.']))) # just extracting the numerical part of the element
-			if ']' in arg: #closing a set
-				sets.append(subset)
-				subset = [] # creating a new one
-
-		output = [*sets[0]] # number of the first set
-
-		for s in sets[1:]: # looping over every other sets
-			for i in range(len(s)):
-				output[i] *= s[i] # multiplying the numbers together
-
-		await ctx.send(f'{output}')
-
 
 """
 @commands.check(#fonction) pour checker un truc (fonction return bool)
