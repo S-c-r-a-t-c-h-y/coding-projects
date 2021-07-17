@@ -9,7 +9,7 @@ from Astar import *
 
 
 WIDTH, HEIGHT = 380, 440
-scale = 20
+SCALE = 20
 Pos = List[int]
 
 class Pacman:
@@ -33,8 +33,8 @@ class Pacman:
         
         # up
         if direction == 'up':
-            if self.pos[0] % scale == 0:
-                if [self.pos[0], self.pos[1] - scale] not in walls:
+            if self.pos[0] % SCALE == 0:
+                if [self.pos[0], self.pos[1] - SCALE] not in walls:
                     self.pos[1] -= self.step
                 else:
                     self.direction = ''
@@ -43,8 +43,8 @@ class Pacman:
 
         # down
         elif direction == 'down':
-            if self.pos[0] % scale == 0:
-                if [self.pos[0], self.pos[1] + scale] not in walls and [self.pos[0], self.pos[1] + scale] != [9 * scale, 9 * scale]:
+            if self.pos[0] % SCALE == 0:
+                if [self.pos[0], self.pos[1] + SCALE] not in walls and [self.pos[0], self.pos[1] + SCALE] != [9 * SCALE, 9 * SCALE]:
                     self.pos[1] += self.step
                 else:
                     self.direction = ''
@@ -53,8 +53,8 @@ class Pacman:
 
         # left
         elif direction == 'left':
-            if self.pos[1] % scale == 0:
-                if [self.pos[0] - scale, self.pos[1]] not in walls:
+            if self.pos[1] % SCALE == 0:
+                if [self.pos[0] - SCALE, self.pos[1]] not in walls:
                     self.pos[0] -= self.step
                 else:
                     self.direction = ''
@@ -63,18 +63,18 @@ class Pacman:
 
         # right
         elif direction == 'right':
-            if self.pos[1] % scale == 0:
-                if [self.pos[0] + scale, self.pos[1]] not in walls:
+            if self.pos[1] % SCALE == 0:
+                if [self.pos[0] + SCALE, self.pos[1]] not in walls:
                     self.pos[0] += self.step
                 else:
                     self.direction = ''
             else:
                 self.move(self.last_direction, cnt + 1)
 
-        if self.pos[0] < -scale:
-            self.pos[0] = width
-        elif self.pos[0] > width:
-            self.pos[0] = -scale
+        if self.pos[0] < -SCALE:
+            self.pos[0] = WIDTH
+        elif self.pos[0] > WIDTH:
+            self.pos[0] = -SCALE
 
 
     def up(self, event) -> None:
@@ -106,7 +106,7 @@ class Pacman:
             ghost.frightened = not ghost.frightened
 
 
-    def get_index(self) -> tuple: return self.pos[0] // scale, self.pos[1] // scale
+    def get_index(self) -> tuple: return self.pos[0] // SCALE, self.pos[1] // SCALE
 
 
     def draw(self) -> None:
@@ -114,13 +114,13 @@ class Pacman:
         draws pacman using the sprites
         '''
         if framecount % 2:
-            if self.direction == 'right': canvas.create_image(self.pos[0] + scale / 2, self.pos[1] + scale / 2, image=right, tags='pacman')
-            if self.direction == 'left': canvas.create_image(self.pos[0] + scale / 2, self.pos[1] + scale / 2, image=left, tags='pacman')
-            if self.direction == 'up': canvas.create_image(self.pos[0] + scale / 2, self.pos[1] + scale / 2, image=up, tags='pacman')
-            if self.direction == 'down': canvas.create_image(self.pos[0] + scale / 2, self.pos[1] + scale / 2, image=down, tags='pacman')
-            if self.direction == '':  canvas.create_image(self.pos[0] + scale / 2, self.pos[1] + scale / 2, image=idle, tags='pacman')
+            if self.direction == 'right': canvas.create_image(self.pos[0] + SCALE / 2, self.pos[1] + SCALE / 2, image=right, tags='pacman')
+            if self.direction == 'left': canvas.create_image(self.pos[0] + SCALE / 2, self.pos[1] + SCALE / 2, image=left, tags='pacman')
+            if self.direction == 'up': canvas.create_image(self.pos[0] + SCALE / 2, self.pos[1] + SCALE / 2, image=up, tags='pacman')
+            if self.direction == 'down': canvas.create_image(self.pos[0] + SCALE / 2, self.pos[1] + SCALE / 2, image=down, tags='pacman')
+            if self.direction == '':  canvas.create_image(self.pos[0] + SCALE / 2, self.pos[1] + SCALE / 2, image=idle, tags='pacman')
         else:
-            canvas.create_image(self.pos[0] + scale / 2, self.pos[1] + scale / 2, image=idle, tags='pacman')
+            canvas.create_image(self.pos[0] + SCALE / 2, self.pos[1] + SCALE / 2, image=idle, tags='pacman')
 
 class Ghost:
 
@@ -138,49 +138,48 @@ class Ghost:
 
     def move(self, direction: str) -> None:
 
-        if self.frightened:
-            self.step = .5
-        else:
-            self.step = 1
-
+        self.step = .5 if self.frightened else 1
         
         if not self.frightened and self.pos[0] % 1 != 0:
             self.pos[0] += .5
 
         if not self.frightened and self.pos[1] % 1 != 0:
             self.pos[1] += .5
-        
-
 
         # up
         if direction == 'up':
-            if self.pos[0] % scale == 0:
-                if [self.pos[0], self.pos[1] - scale] not in walls:
-                    self.pos[1] -= self.step
+            if (
+                self.pos[0] % SCALE == 0
+                and [self.pos[0], self.pos[1] - SCALE] not in walls
+            ):
+                self.pos[1] -= self.step
 
 
-        # down
         elif direction == 'down':
-            if self.pos[0] % scale == 0:
-                if [self.pos[0], self.pos[1] + scale] not in walls:
-                    self.pos[1] += self.step
+            if (
+                self.pos[0] % SCALE == 0
+                and [self.pos[0], self.pos[1] + SCALE] not in walls
+            ):
+                self.pos[1] += self.step
 
-        # left
         elif direction == 'left':
-            if self.pos[1] % scale == 0:
-                if [self.pos[0] - scale, self.pos[1]] not in walls:
-                    self.pos[0] -= self.step
+            if (
+                self.pos[1] % SCALE == 0
+                and [self.pos[0] - SCALE, self.pos[1]] not in walls
+            ):
+                self.pos[0] -= self.step
 
-        # right
         elif direction == 'right':
-            if self.pos[1] % scale == 0:
-                if [self.pos[0] + scale, self.pos[1]] not in walls:
-                    self.pos[0] += self.step
+            if (
+                self.pos[1] % SCALE == 0
+                and [self.pos[0] + SCALE, self.pos[1]] not in walls
+            ):
+                self.pos[0] += self.step
 
-        if self.pos[0] < -scale:
-            self.pos[0] = width
-        elif self.pos[0] > width:
-            self.pos[0] = -scale
+        if self.pos[0] < -SCALE:
+            self.pos[0] = WIDTH
+        elif self.pos[0] > WIDTH:
+            self.pos[0] = -SCALE
 
 
     def select_direction(self) -> None:
@@ -190,35 +189,35 @@ class Ghost:
         if not self.frightened or not self.alive:
             self.find_target()
             
-            if 7 * scale <= self.pos[0] <= 11 * scale and (self.pos[1] == 16 * scale or self.pos[1] == 20 * scale):
+            if 7 * SCALE <= self.pos[0] <= 11 * SCALE and (self.pos[1] == 16 * SCALE or self.pos[1] == 20 * SCALE):
                 walls_indices.append([8, 15])
                 walls_indices.append([10, 15])
                 walls_indices.append([8, 19])
                 walls_indices.append([10, 19])
 
             if self.direction == 'up':
-                walls_indices.append([self.pos[0] // scale, self.pos[1] // scale + 1])
+                walls_indices.append([self.pos[0] // SCALE, self.pos[1] // SCALE + 1])
             elif self.direction == 'down':
-                walls_indices.append([self.pos[0] // scale, self.pos[1] // scale - 1])
+                walls_indices.append([self.pos[0] // SCALE, self.pos[1] // SCALE - 1])
             elif self.direction == 'left':
-                walls_indices.append([self.pos[0] // scale + 1, self.pos[1] // scale])
+                walls_indices.append([self.pos[0] // SCALE + 1, self.pos[1] // SCALE])
             elif self.direction == 'right':
-                walls_indices.append([self.pos[0] // scale - 1, self.pos[1] // scale])
+                walls_indices.append([self.pos[0] // SCALE - 1, self.pos[1] // SCALE])
 
-            solver = AStar(walls_indices, (self.pos[0] // scale, self.pos[1] // scale), self.target)
+            solver = AStar(walls_indices, (self.pos[0] // SCALE, self.pos[1] // SCALE), self.target)
             next_step = solver.process()
             
             while len(walls_indices) != 238:
                 walls_indices.pop()
 
             if next_step is not None:
-                if next_step[0] < self.pos[0] // scale:
+                if next_step[0] < self.pos[0] // SCALE:
                     self.direction = 'left'
-                elif next_step[0] > self.pos[0] // scale:
+                elif next_step[0] > self.pos[0] // SCALE:
                     self.direction = 'right'
-                elif next_step[1] < self.pos[1] // scale:
+                elif next_step[1] < self.pos[1] // SCALE:
                     self.direction = 'up'
-                elif next_step[1] > self.pos[1] // scale:
+                elif next_step[1] > self.pos[1] // SCALE:
                     self.direction = 'down'
             else:
                 self.select_random_direction()
@@ -275,14 +274,14 @@ class Ghost:
                     intermediate = pac_x + 2, pac_y
 
                 blinky: 'Ghost' = ghosts[0]
-                vect: List[int] = [- (blinky.pos[0] // scale - intermediate[0]), - (blinky.pos[1] // scale - intermediate[1])]
+                vect: List[int] = [- (blinky.pos[0] // SCALE - intermediate[0]), - (blinky.pos[1] // SCALE - intermediate[1])]
 
                 self.target = intermediate[0] + vect[0], intermediate[1] + vect[1]
 
             # clyde's target tile is the same as blinky's one if he is more
             # than 5 tiles away form pacman
             elif self.name == 'clyde':
-                if distance(self.pos[0], self.pos[1], pacman.pos[0], pacman.pos[1]) / scale >= 5:
+                if distance(self.pos[0], self.pos[1], pacman.pos[0], pacman.pos[1]) / SCALE >= 5:
                     self.target = pac_x, pac_y
                 else:
                     self.target = 1, 20
@@ -293,18 +292,8 @@ class Ghost:
             elif self.name == 'inky': self.target = 17, 20
             elif self.name == 'clyde': self.target = 1, 20
 
-
-
-        if self.target[0] < 0:
-            self.target = 0, self.target[1]
-        elif self.target[0] >= 19:
-            self.target = 18, self.target[1]
-
-        if self.target[1] < 0:
-            self.target = self.target[0], 0
-        elif self.target[1] >= 22:
-            self.target = self.target[0], 21
-
+        self.target = 0, self.target[1] if self.target[0] < 0 else 18, self.target[1] if self.target[0] >= 19 else self.target
+        self.target = self.target[0], 0 if self.target[1] < 0 else self.target[0], 21 if if self.target[1] >= 22 else self.target
 
     def select_random_direction(self) -> None:
         possible: list = ['up', 'right', 'left', 'down']
@@ -318,50 +307,49 @@ class Ghost:
         while self.direction == inverse_dir:
             self.direction = choice(possible)
 
-
     def print_target(self) -> None:
         self.find_target()
-        canvas.create_rectangle(self.target[0] * scale, self.target[1] * scale, self.target[0] * scale + scale, \
-         self.target[1] * scale + scale, outline='red', fill='red')
+        canvas.create_rectangle(self.target[0] * SCALE, self.target[1] * SCALE, self.target[0] * SCALE + SCALE, \
+         self.target[1] * SCALE + SCALE, outline='red', fill='red')
       
-        
     def is_on_junction(self) -> bool:
         
-        if self.pos[0] % scale == 0 and self.pos[1] % scale == 0:
-            if self.direction == 'up' or self.direction == 'down':
-                if [self.pos[0] + scale, self.pos[1]] not in walls or \
-                   [self.pos[0] - scale, self.pos[1]] not in walls:
+        if self.pos[0] % SCALE == 0 and self.pos[1] % SCALE == 0:
+            if self.direction in ['up', 'down']:
+                if [self.pos[0] + SCALE, self.pos[1]] not in walls or \
+                   [self.pos[0] - SCALE, self.pos[1]] not in walls:
                     return True
-            elif self.direction == 'left' or self.direction == 'right':
-                if [self.pos[0], self.pos[1] + scale] not in walls or \
-                   [self.pos[0], self.pos[1] - scale] not in walls:
+            elif self.direction in ['left', 'right']:
+                if [self.pos[0], self.pos[1] + SCALE] not in walls or \
+                   [self.pos[0], self.pos[1] - SCALE] not in walls:
                     return True
-        
-            # prevent ghosts from being stuck in the begining area
-            if ([self.pos[0] + scale, self.pos[1]] not in walls) ^ \
-                       ([self.pos[0] - scale, self.pos[1]] not in walls) ^ \
-                       ([self.pos[0], self.pos[1] + scale] not in walls) ^ \
-                       ([self.pos[0], self.pos[1] - scale] not in walls):
-                return True
-        
-        return False
 
+            # prevent ghosts from being stuck in the begining area
+            if (
+                    ([self.pos[0] + SCALE, self.pos[1]] not in walls) ^
+                    ([self.pos[0] - SCALE, self.pos[1]] not in walls) ^
+                    ([self.pos[0], self.pos[1] + SCALE] not in walls) ^
+                    ([self.pos[0], self.pos[1] - SCALE] not in walls)
+                ):
+                return True
+
+        return False
 
     def draw(self) -> None:
 
         if not self.alive:
-            canvas.create_image(self.pos[0] + scale / 2, self.pos[1] + scale / 2, image=eyes_img, tags='ghost')
+            canvas.create_image(self.pos[0] + SCALE / 2, self.pos[1] + SCALE / 2, image=eyes_img, tags='ghost')
         elif self.frightened:
-            canvas.create_image(self.pos[0] + scale / 2, self.pos[1] + scale / 2, image=vulnerable, tags='ghost')
+            canvas.create_image(self.pos[0] + SCALE / 2, self.pos[1] + SCALE / 2, image=vulnerable, tags='ghost')
         else:
             if self.name == 'inky':
-                canvas.create_image(self.pos[0] + scale / 2, self.pos[1] + scale / 2, image=inky_img, tags='ghost')
+                canvas.create_image(self.pos[0] + SCALE / 2, self.pos[1] + SCALE / 2, image=inky_img, tags='ghost')
             if self.name == 'pinky':
-                canvas.create_image(self.pos[0] + scale / 2, self.pos[1] + scale / 2, image=pinky_img, tags='ghost')
+                canvas.create_image(self.pos[0] + SCALE / 2, self.pos[1] + SCALE / 2, image=pinky_img, tags='ghost')
             if self.name == 'blinky':
-                canvas.create_image(self.pos[0] + scale / 2, self.pos[1] + scale / 2, image=blinky_img, tags='ghost')
+                canvas.create_image(self.pos[0] + SCALE / 2, self.pos[1] + SCALE / 2, image=blinky_img, tags='ghost')
             if self.name == 'clyde':
-                canvas.create_image(self.pos[0] + scale / 2, self.pos[1] + scale / 2, image=clyde_img, tags='ghost')
+                canvas.create_image(self.pos[0] + SCALE / 2, self.pos[1] + SCALE / 2, image=clyde_img, tags='ghost')
 
 # ------------------------------------------------------------------------------------------------------------------
 
@@ -388,7 +376,7 @@ def update() -> None:
         time.sleep(1)
 
     # repeat the process 4 times for it to be smooth
-    for i in range(difficulty):
+    for _ in range(difficulty):
 
         # when eating balls
         if pacman.pos in balls:
@@ -408,12 +396,12 @@ def update() -> None:
 
         for ghost in ghosts:
 
-            if ghost.pos == [9 * scale, 10 * scale]:
+            if ghost.pos == [9 * SCALE, 10 * SCALE]:
                 ghost.alive = True
                 ghost.direction = 'up'
 
             # checking for collision with ghosts
-            if distance(pacman.pos[0], pacman.pos[1], ghost.pos[0], ghost.pos[1]) <= scale / 10: # touchs
+            if distance(pacman.pos[0], pacman.pos[1], ghost.pos[0], ghost.pos[1]) <= SCALE / 10: # touchs
 
                 # pacman gets eaten
                 if not pacman.invincible and ghost.alive:
@@ -459,15 +447,15 @@ def draw() -> None:
 
     # draws each walls
     for wall in walls:
-        canvas.create_rectangle(wall[0], wall[1], wall[0] + scale, wall[1] + scale, outline='blue4', fill='blue4')
+        canvas.create_rectangle(wall[0], wall[1], wall[0] + SCALE, wall[1] + SCALE, outline='blue4', fill='blue4')
 
     # draws each balls
     for ball in balls:
-        canvas.create_oval(ball[0] + scale / 2.5, ball[1] + scale / 2.5, ball[0] + scale / 1.5, ball[1] + scale / 1.5, outline='white', fill='yellow')
+        canvas.create_oval(ball[0] + SCALE / 2.5, ball[1] + SCALE / 2.5, ball[0] + SCALE / 1.5, ball[1] + SCALE / 1.5, outline='white', fill='yellow')
 
     # draws each balls
     for power in powers:
-        canvas.create_oval(power[0] + scale / 4, power[1] + scale / 4, power[0] + scale / 1.2, power[1] + scale / 1.2, outline='white', fill='white')
+        canvas.create_oval(power[0] + SCALE / 4, power[1] + SCALE / 4, power[0] + SCALE / 1.2, power[1] + SCALE / 1.2, outline='white', fill='white')
 
 # ------------------------------------------------------------------------------------------------------------------
 
@@ -497,99 +485,99 @@ def create_walls() -> None:
     walls = []
 
     # up / down
-    for i in range(int(width // scale / 2 - .5)):
-        walls.append([i * scale, 0])
-        walls.append([i * scale, height - scale])
+    for i in range(int(WIDTH // SCALE / 2 - .5)):
+        walls.append([i * SCALE, 0])
+        walls.append([i * SCALE, HEIGHT - SCALE])
 
     # left / right
-    for i in range(height // scale):
-        walls.append([0, i * scale])
+    for i in range(HEIGHT // SCALE):
+        walls.append([0, i * SCALE])
 
     # extremen left / right
     for j in range(7, 14, 2):
         for i in range(4):
-            walls.append([i * scale, j * scale])
+            walls.append([i * SCALE, j * SCALE])
 
     # big left / right horizontal bar
     
     for i in range(6):
-        walls.append([(i + 2) * scale, 19 * scale])
+        walls.append([(i + 2) * SCALE, 19 * SCALE])
 
 
     for i in range(3):
-        walls.append([(i + 5) * scale, 15 * scale])
+        walls.append([(i + 5) * SCALE, 15 * SCALE])
 
     for i in range(3):
-        walls.append([5 * scale, (i + 11) * scale])
+        walls.append([5 * SCALE, (i + 11) * SCALE])
 
     for i in range(5):
-        walls.append([5 * scale, (i + 5) * scale])
+        walls.append([5 * SCALE, (i + 5) * SCALE])
 
     for i in range(2):
-        walls.append([(i + 7) * scale, 5 * scale])
+        walls.append([(i + 7) * SCALE, 5 * SCALE])
 
     for i in range(2):
-        walls.append([(i + 7) * scale, 9 * scale])
+        walls.append([(i + 7) * SCALE, 9 * SCALE])
 
     for i in range(2):
-        walls.append([(i + 7) * scale, 11 * scale])
+        walls.append([(i + 7) * SCALE, 11 * SCALE])
 
     for i in range(2):
-        walls.append([(i + 7) * scale, 13 * scale])
+        walls.append([(i + 7) * SCALE, 13 * SCALE])
 
     for i in range(2):
-        walls.append([(i + 7) * scale, 17 * scale])
-
-    for i in range(3):
-        walls.append([3 * scale, (i + 15) * scale])
-
-    for i in range(2):
-        walls.append([(i + 2) * scale, 2 * scale])
-    for i in range(2):
-        walls.append([(i + 2) * scale, 3 * scale])
-    for i in range(2):
-        walls.append([(i + 2) * scale, 5 * scale])
+        walls.append([(i + 7) * SCALE, 17 * SCALE])
 
     for i in range(3):
-        walls.append([(i + 5) * scale, 2 * scale])
+        walls.append([3 * SCALE, (i + 15) * SCALE])
+
+    for i in range(2):
+        walls.append([(i + 2) * SCALE, 2 * SCALE])
+    for i in range(2):
+        walls.append([(i + 2) * SCALE, 3 * SCALE])
+    for i in range(2):
+        walls.append([(i + 2) * SCALE, 5 * SCALE])
+
     for i in range(3):
-        walls.append([(i + 5) * scale, 3 * scale])
+        walls.append([(i + 5) * SCALE, 2 * SCALE])
+    for i in range(3):
+        walls.append([(i + 5) * SCALE, 3 * SCALE])
 
     # middle
     for i in range(4):
-        walls.append([9 * scale, i * scale])
+        walls.append([9 * SCALE, i * SCALE])
     for i in range(3):
-        walls.append([9 * scale, (i + 17) * scale])
+        walls.append([9 * SCALE, (i + 17) * SCALE])
     for i in range(3):
-        walls.append([9 * scale, (i + 13) * scale])
+        walls.append([9 * SCALE, (i + 13) * SCALE])
     for i in range(3):
-        walls.append([9 * scale, (i + 5) * scale])
+        walls.append([9 * SCALE, (i + 5) * SCALE])
 
-    wanted_walls = [[3 * scale, 8 * scale], [3 * scale, 12 * scale], [1 * scale, 17 * scale], \
-                    [5 * scale, 18 * scale], [5 * scale, 17 * scale], [9 * scale, height - scale], \
-                    [2 * scale, 15 * scale], [9 * scale, 11 * scale], [7 * scale, 10 * scale], \
-                    [6 * scale, 7 * scale], [7 * scale, 7 * scale]]
+    wanted_walls = [[3 * SCALE, 8 * SCALE], [3 * SCALE, 12 * SCALE], [1 * SCALE, 17 * SCALE], \
+                    [5 * SCALE, 18 * SCALE], [5 * SCALE, 17 * SCALE], [9 * SCALE, HEIGHT - SCALE], \
+                    [2 * SCALE, 15 * SCALE], [9 * SCALE, 11 * SCALE], [7 * SCALE, 10 * SCALE], \
+                    [6 * SCALE, 7 * SCALE], [7 * SCALE, 7 * SCALE]]
 
     for wall in wanted_walls:
         walls.append(wall)
 
-    unwanted_walls = [[0, 8 * scale], [0, 10 * scale], [0, 12 * scale]]
+    unwanted_walls = [[0, 8 * SCALE], [0, 10 * SCALE], [0, 12 * SCALE]]
 
     walls = [e for e in walls if e not in unwanted_walls]
 
     walls2 = []
     for wall in walls:
-        walls2.append([width - wall[0] - scale, wall[1]])
+        walls2.append([WIDTH - wall[0] - SCALE, wall[1]])
     walls.extend(walls2)
     
     walls_indices = []
     for wall in walls:
-        walls_indices.append([wall[0] // scale, wall[1] // scale])
+        walls_indices.append([wall[0] // SCALE, wall[1] // SCALE])
 
 # ------------------------------------------------------------------------------------------------------------------
 
 def create_ghost(name: str) -> None:
-    ghosts.append(Ghost([9 * scale, 10 * scale], name))
+    ghosts.append(Ghost([9 * SCALE, 10 * SCALE], name))
 
 # ------------------------------------------------------------------------------------------------------------------
 
@@ -602,32 +590,32 @@ def setup() -> None:
     powers = []
 
     # creates every balls
-    for i in range(width // scale):
-        for j in range(height // scale):
-            if [i * scale, j * scale] not in walls and [i * scale, j * scale] != pacman.pos:
-                balls.append([i * scale, j * scale])
+    for i in range(WIDTH // SCALE):
+        for j in range(HEIGHT // SCALE):
+            if [i * SCALE, j * SCALE] not in walls and [i * SCALE, j * SCALE] != pacman.pos:
+                balls.append([i * SCALE, j * SCALE])
 
     # remove all the balls that are in unwanted places
     for i in range(len(balls)-1, -1, -1):
-        if 5 * scale <= balls[i][0] <= 13 * scale and 7 * scale <= balls[i][1] <= 13 * scale:
+        if 5 * SCALE <= balls[i][0] <= 13 * SCALE and 7 * SCALE <= balls[i][1] <= 13 * SCALE:
             balls.pop(i)
-        if 0 * scale <= balls[i][0] <= 3 * scale and 7 * scale <= balls[i][1] <= 13 * scale:
+        if 0 * SCALE <= balls[i][0] <= 3 * SCALE and 7 * SCALE <= balls[i][1] <= 13 * SCALE:
             balls.pop(i)
-        if 15 * scale <= balls[i][0] <= 19 * scale and 7 * scale <= balls[i][1] <= 13 * scale:
+        if 15 * SCALE <= balls[i][0] <= 19 * SCALE and 7 * SCALE <= balls[i][1] <= 13 * SCALE:
             balls.pop(i)
 
     # replace certain balls by power-ups
-    balls.remove([scale, 3 * scale])
-    powers.append([scale, 3 * scale])
+    balls.remove([SCALE, 3 * SCALE])
+    powers.append([SCALE, 3 * SCALE])
 
-    balls.remove([scale, 16 * scale])
-    powers.append([scale, 16 * scale])
+    balls.remove([SCALE, 16 * SCALE])
+    powers.append([SCALE, 16 * SCALE])
 
-    balls.remove([(width // scale - 2) * scale, 3 * scale])
-    powers.append([(width // scale - 2) * scale, 3 * scale])
+    balls.remove([(WIDTH // SCALE - 2) * SCALE, 3 * SCALE])
+    powers.append([(WIDTH // SCALE - 2) * SCALE, 3 * SCALE])
 
-    balls.remove([(width // scale - 2) * scale, 16 * scale])
-    powers.append([(width // scale - 2) * scale, 16 * scale])
+    balls.remove([(WIDTH // SCALE - 2) * SCALE, 16 * SCALE])
+    powers.append([(WIDTH // SCALE - 2) * SCALE, 16 * SCALE])
 
     # create ghosts
     ghosts = []
