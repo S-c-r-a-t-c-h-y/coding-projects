@@ -12,32 +12,29 @@ last_modification = "C:\\Date de dernière modification"
 
 class MyHandler(FileSystemEventHandler):
 
-    last_deleted_file = None
-    previous_file_path = None
-    
+    deleted_files = []
     tracked_folders = [creation, today, last_modification]
 
     def on_created(self, event):
         file_name = event.src_path.split('\\')[-1]
         folder = '\\'.join(event.src_path.split('\\')[:-1])
         
-        if file_name == self.last_deleted_file and folder in self.tracked_folders:
-            
-            date = ''
-            if folder == today:
-                date = datetime.today().strftime('%d-%m-%Y')
-            elif folder == creation:
-                date = datetime.fromtimestamp(pathlib.Path(event.src_path).stat().st_ctime).date().strftime('%d-%m-%Y')
-            elif folder == last_modification:
-                date = datetime.fromtimestamp(pathlib.Path(event.src_path).stat().st_mtime).date().strftime('%d-%m-%Y')
-         
-            os.rename(event.src_path, f"{self.previous_file_path}\\{date} - {file_name}")
-            self.last_deleted_file = None
-            self.previous_file_path = None
+        if file_name in (only_file_names := [couple[0] for couple in self.deleted_files]):
+            couple = self.deleted_files[only_file_names.index(file_name)]
+            if folder in self.tracked_folders:
+                date = ''
+                if folder == today:
+                    date = datetime.today().strftime('%d-%m-%Y')
+                elif folder == creation:
+                    date = datetime.fromtimestamp(pathlib.Path(event.src_path).stat().st_ctime).date().strftime('%d-%m-%Y')
+                elif folder == last_modification:
+                    date = datetime.fromtimestamp(pathlib.Path(event.src_path).stat().st_mtime).date().strftime('%d-%m-%Y')
+                os.rename(event.src_path, f"{couple[1]}\\{date} - {file_name}")
+                
+            self.deleted_files.remove(couple)
             
     def on_deleted(self, event):
-        self.last_deleted_file = event.src_path.split('\\')[-1]
-        self.previous_file_path = '\\'.join(event.src_path.split('\\')[:-1])
+        self.deleted_files.append((event.src_path.split('\\')[-1], '\\'.join(event.src_path.split('\\')[:-1])))
 
 if __name__ == "__main__":
     
