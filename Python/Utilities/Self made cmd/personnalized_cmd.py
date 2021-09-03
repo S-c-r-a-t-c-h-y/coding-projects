@@ -9,7 +9,8 @@ COMMANDS = {'cmd': 'start cmd',
             'music': 'start spotify',
             'spotify': 'start spotify',
             'discord': 'start discord',
-            'code': r'code "C:\Users\Personne\Desktop\Coding Projects"'}
+            'code': r'code "C:\Users\Personne\Desktop\Coding Projects"',
+            'ark': 'ark'}
 
 if __name__ == '__main__':
     top = tk.Tk()
