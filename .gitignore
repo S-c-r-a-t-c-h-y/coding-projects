@@ -45,6 +45,7 @@ __pycache__
 .mypy_cache
 
 ### Node.JS ###
+###############
 .DS_Store
 /config.js
 node_modules
