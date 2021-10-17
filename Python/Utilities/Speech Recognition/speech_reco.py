@@ -18,6 +18,7 @@ def evaluer_commande(commande):
 
         "ouvre google" : ["start chrome"],
         "ouvre naviguateur" : ["start chrome"],
+        "ouvre github": ["start https://github.com/S-c-r-a-t-c-h-y/coding-projects"],
 
         "ouvre visual studio code" : ["code"],
         "ouvre vs code" : ["code"],
@@ -52,9 +53,9 @@ def evaluer_commande(commande):
         cmd = "%20".join(cmd[1:len(cmd)-2])
         os.system(f"start https://open.spotify.com/search/{cmd}")
         
-    elif set(["synchronise", "code", "github"]).issubset(cmd := commande.split(" ")) or set(["synchroniser", "code", "github"]).issubset(cmd):
+    elif set(["synchronise", "github"]).issubset(cmd := commande.split(" ")) or set(["synchroniser", "github"]).issubset(cmd):
         msg = ""
-        if set(["avec", "le", "message"]).issubset(cmd):
+        if set(["message"]).issubset(cmd):
             msg = " ".join(cmd).split("message ")[-1]
         current = os.getcwd()
         os.chdir(paths["global"])
@@ -65,9 +66,7 @@ def evaluer_commande(commande):
 
     elif commande in commandes:
         for c in commandes[commande]:
-            print(f"Executing command : {c}")
             os.system(c)
-        print()
 
     elif parts[0] == "ouvre":
         os.system(f'start {" ".join(parts[1:])}')
