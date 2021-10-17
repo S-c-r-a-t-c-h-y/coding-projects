@@ -1,12 +1,13 @@
+import os
+cmd = "synchronise le code sur github avec le message ajouts de commande de reconnaissance vocale"
 
-a = "cherche youtube sur google".split(" ")
-b = "cherche sur google".split(" ")
-
-commande = ""
-if 'cherche' in a and 'sur' in a and 'google' in a and a != b:
-    for elem in a:
-        if elem not in b:
-            commande += f"{elem} "
-    commande = commande[:-1]
-            
-print(commande)
+if set(["synchronise", "code", "github"]).issubset(commande := cmd.split(" ")):
+    msg = ""
+    if set(["avec", "le", "message"]).issubset(commande):
+        msg = " ".join(commande).split("message ")[-1]
+    current = os.getcwd()
+    os.chdir(r"C:\Users\Personne\Desktop\'Coding Projects'")
+    os.system("git add .")
+    os.system(f'git commit -m "{msg}"')
+    os.system("git push")
+    os.chdir(current)
