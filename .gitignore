@@ -39,6 +39,10 @@
 ehthumbs.db
 Thumbs.db
 
+# VS Code generated files #
+###########################
+.vscode
+
 # Python generated folders #
 ############################
 __pycache__
