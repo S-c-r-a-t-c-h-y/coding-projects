@@ -28,9 +28,9 @@ while 1:
     
     faces = face_cascade.detectMultiScale(img_gray, 1.1, 4)
     for (x, y, w, h) in faces:
-        cv2.rectangle(img, (x, y), (x+w, y+h), (0, 255, 0), 2)
-    
-    cv2.imshow("Video", img)
+        # cv2.rectangle(img, (x, y), (x+w, y+h), (0, 255, 0), 2)
+        img_cropped = img[y: y+h, x:x+w]
+        cv2.imshow("Video", img_cropped)
     
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
