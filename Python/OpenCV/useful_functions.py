@@ -32,7 +32,7 @@ def stack_images(scale,imgArray):
         ver = hor
     return ver
 
-def draw_contours(img, drawing_image, area_treshold=500, points_treshold=0.01)
+def draw_contours(img, drawing_image, area_treshold=500, points_treshold=0.01):
     contours, hierarchy = cv2.findContours(img, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
     for cnt in contours:
         area = cv2.contourArea(cnt)
