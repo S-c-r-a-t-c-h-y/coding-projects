@@ -32,7 +32,7 @@ def stack_images(scale,imgArray):
         ver = hor
     return ver
 
-def get_contours(img, drawing_image, area_treshold=500, points_treshold=0.01):
+def draw_contours(img, drawing_image, area_treshold=500, points_treshold=0.01)
     contours, hierarchy = cv2.findContours(img, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
     for cnt in contours:
         area = cv2.contourArea(cnt)
@@ -57,5 +57,16 @@ def get_contours(img, drawing_image, area_treshold=500, points_treshold=0.01):
             cv2.putText(drawing_image, object_type, 
                         (x + (w// 2) - 10, y + (h // 2) - 10), cv2.FONT_HERSHEY_COMPLEX, 0.6, (0, 0, 0), 1)
     
+    
+def get_contours(img, area_treshold=500, points_treshold=0.01):
+    contours, hierarchy = cv2.findContours(img, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
+    for cnt in contours:
+        area = cv2.contourArea(cnt)
+        if area > area_treshold:
+            peri = cv2.arcLength(cnt, True)
+            approx = cv2.approxPolyDP(cnt, points_treshold*peri, True)
+            # obj_corners = len(approx)
+            x, y, w, h = cv2.boundingRect(approx)
+
     
     
