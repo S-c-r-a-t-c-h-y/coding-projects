@@ -44,39 +44,35 @@ cap.set(4, HEIGHT)
 
 detector = htm.hand_detector(max_hands=1)
 
-try:
-    while True:
-        success, img = cap.read()
-        img = cv2.flip(img, 1)
-        img = detector.find_hands(img, draw=True)
-        lm_list = detector.find_position(img, draw=True)
+while True:
+    success, img = cap.read()
+    img = cv2.flip(img, 1)
+    img = detector.find_hands(img, draw=True)
+    lm_list = detector.find_position(img, draw=True)
 
-        # c_time = time.time()
-        # fps = 1 / (c_time - p_time)
-        # p_time = c_time
+    # c_time = time.time()
+    # fps = 1 / (c_time - p_time)
+    # p_time = c_time
 
-        if len(lm_list) != 0:
-            index_finger_tip = lm_list[8]
-            # print(index_finger_tip[1], index_finger_tip[2], WIDTH, HEIGHT)
-            x1 = int(np.interp(index_finger_tip[1], (0, WIDTH), (min_x - OFFSET, max_x + OFFSET)))
-            y1 = int(np.interp(index_finger_tip[2], (0, HEIGHT), (min_y - OFFSET, max_y + OFFSET)))
+    if len(lm_list) != 0:
+        index_finger_tip = lm_list[8]
+        # print(index_finger_tip[1], index_finger_tip[2], WIDTH, HEIGHT)
+        x1 = int(np.interp(index_finger_tip[1], (0, WIDTH), (min_x - OFFSET, max_x + OFFSET)))
+        y1 = int(np.interp(index_finger_tip[2], (0, HEIGHT), (min_y - OFFSET, max_y + OFFSET)))
 
-            # https://docs.microsoft.com/fr-fr/windows/win32/api/winuser/nf-winuser-mouse_event?redirectedfrom=MSDN
-            if detector.finger_is_up(img, 2):
-                length, img, _ = detector.find_distance(img, 8, 12)
-                if length < 40:
-                    user32.mouse_event(2, 0, 0, 0, 0)
-                    time.sleep(0.01)
-                    user32.mouse_event(4, 0, 0, 0, 0)
-                    time.sleep(0.1)
-            else:
-                user32.SetCursorPos(x1, y1)
+        # https://docs.microsoft.com/fr-fr/windows/win32/api/winuser/nf-winuser-mouse_event?redirectedfrom=MSDN
+        if detector.finger_is_up(img, 2):
+            length, img, _ = detector.find_distance(img, 8, 12)
+            if length < 40:
+                user32.mouse_event(2, 0, 0, 0, 0)
+                time.sleep(0.01)
+                user32.mouse_event(4, 0, 0, 0, 0)
+                time.sleep(0.1)
+        else:
+            user32.SetCursorPos(x1, y1)
 
-        # cv2.putText(img, str(int(fps)), (10, 70), cv2.FONT_HERSHEY_PLAIN, 3, (255, 0, 255), 3)
+    # cv2.putText(img, str(int(fps)), (10, 70), cv2.FONT_HERSHEY_PLAIN, 3, (255, 0, 255), 3)
 
-        cv2.imshow("Image", img)
-        if cv2.waitKey(5) & 0xFF == ord("s"):
-            break
-
-except KeyboardInterrupt:
-    pass
+    cv2.imshow("Image", img)
+    if cv2.waitKey(5) & 0xFF == ord("s"):
+        break
