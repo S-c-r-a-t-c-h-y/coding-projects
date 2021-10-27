@@ -28,7 +28,7 @@ def get_screen_metrics():
 
 
 min_x, max_x, min_y, max_y = get_screen_metrics()
-print(min_x, max_x, min_y, max_y)
+# print(min_x, max_x, min_y, max_y)
 
 OFFSET = 40
 
@@ -62,12 +62,15 @@ try:
             y1 = int(np.interp(index_finger_tip[2], (0, HEIGHT), (min_y - OFFSET, max_y + OFFSET)))
 
             # https://docs.microsoft.com/fr-fr/windows/win32/api/winuser/nf-winuser-mouse_event?redirectedfrom=MSDN
-            if detector.finger_is_up(img, 0, 2):
-                # user32.mouse_event(2, 0, 0, 0, 0)
-                pass
+            if detector.finger_is_up(img, 2):
+                length, img, _ = detector.find_distance(img, 8, 12)
+                if length < 40:
+                    user32.mouse_event(2, 0, 0, 0, 0)
+                    time.sleep(0.01)
+                    user32.mouse_event(4, 0, 0, 0, 0)
+                    time.sleep(0.1)
             else:
-                user32.mouse_event(4, 0, 0, 0, 0)
-            user32.SetCursorPos(x1, y1)
+                user32.SetCursorPos(x1, y1)
 
         # cv2.putText(img, str(int(fps)), (10, 70), cv2.FONT_HERSHEY_PLAIN, 3, (255, 0, 255), 3)
 

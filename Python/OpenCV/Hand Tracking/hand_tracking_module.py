@@ -1,12 +1,12 @@
 """
 Hand tracking Module
-Name: Syed
 """
 
 from typing import List
 import cv2
 import mediapipe as mp
 import time
+import math
 
 
 class hand_detector:
@@ -47,18 +47,18 @@ class hand_detector:
 
     def find_position(self, img, hand_no: int = 0, draw: bool = True) -> List[List[int]]:
 
-        lmlist = []
+        self.lmlist = []
         if self.results.multi_hand_landmarks:
             myHand = self.results.multi_hand_landmarks[hand_no]
             for id, lm in enumerate(myHand.landmark):
                 h, w, c = img.shape
                 cx, cy = int(lm.x * w), int(lm.y * h)
-                lmlist.append([id, cx, cy])
+                self.lmlist.append([id, cx, cy])
                 if draw:
                     cv2.circle(img, (cx, cy), 7, (255, 0, 255), cv2.FILLED)
-        return lmlist
+        return self.lmlist
 
-    def finger_is_up(self, img, hand_no: int = 0, finger_no: int = 1, treshold: int = 10) -> bool:
+    def finger_is_up(self, img, finger_no: int = 1, hand_no: int = 0, treshold: int = 10) -> bool:
         """Returns True if the finger n°finger_no from the hand n°hand_no is up
         (0=thumb, 1=index finger, 2=middle finger, 3=ring_finger, 4=pinky)
         otherwise returns False.
@@ -66,9 +66,9 @@ class hand_detector:
         between the parts of the finger to count as being up and not down.
         """
 
-        finger_positions = self.find_position(img, hand_no, draw=False)
-        if finger_positions:
-            finger = finger_positions[(finger_no * 4 + 1) : (finger_no * 4 + 5)]
+        self.find_position(img, hand_no, draw=False)
+        if self.lmlist:
+            finger = self.lmlist[(finger_no * 4 + 1) : (finger_no * 4 + 5)]
             positions = (mcp, pip, dip, tip) = [(x, y) for _, x, y in finger]
 
             for i in range(1, 4):
@@ -79,11 +79,35 @@ class hand_detector:
         else:
             return False
 
-    def nb_finger_up(self, img, hand_no: int = 0, treshold: int = 10) -> int:
+    def nb_fingers_up(self, img, hand_no: int = 0, treshold: int = 10) -> int:
         """
         Returns the number of fingers that are up on the hand n°hand_no.
         """
-        return [self.finger_is_up(img, hand_no, i, treshold) for i in range(5)].count(True)
+        return self.fingers_up(img, hand_no, treshold).count(True)
+
+    def fingers_up(self, img, hand_no: int = 0, treshold: int = 10) -> List[bool]:
+        """
+        Returns a list of boolean values representing each finger and there state (up or down) on the hand n°hand_no.
+        """
+        return [self.finger_is_up(img, i, hand_no, treshold) for i in range(5)]
+
+    def find_distance(self, img, joint1: int, joint2: int, draw: bool = True, hand_no: int = 0):
+
+        self.find_position(img, hand_no, draw=draw)
+
+        x1, y1 = self.lmlist[joint1][1:]
+        x2, y2 = self.lmlist[joint2][1:]
+        cx, cy = (x1 + x2) // 2, (y1 + y2) // 2
+
+        if draw:
+            r, t = 10, 3
+            cv2.line(img, (x1, y1), (x2, y2), (255, 0, 255), t)
+            cv2.circle(img, (x1, y1), r, (255, 0, 255), cv2.FILLED)
+            cv2.circle(img, (x2, y2), r, (255, 0, 255), cv2.FILLED)
+            cv2.circle(img, (cx, cy), r, (0, 0, 255), cv2.FILLED)
+        length = math.hypot(x2 - x1, y2 - y1)
+
+        return length, img, [x1, y1, x2, y2, cx, cy]
 
 
 def main():
