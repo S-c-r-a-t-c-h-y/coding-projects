@@ -30,7 +30,7 @@ def get_screen_metrics():
 min_x, max_x, min_y, max_y = get_screen_metrics()
 # print(min_x, max_x, min_y, max_y)
 
-OFFSET = 40
+OFFSET = 80
 
 p_time = 0
 c_time = 0
@@ -40,9 +40,12 @@ cap = cv2.VideoCapture(0)
 cap.set(3, WIDTH)
 cap.set(4, HEIGHT)
 
-# WIDTH, HEIGHT = cap.get(cv2.CAP_PROP_FRAME_WIDTH), cap.get(cv2.CAP_PROP_FRAME_HEIGHT)
+SMOOTHENING = 4
+plocX, plocY = 0, 0
+clocX, clocY = 0, 0
 
-detector = htm.hand_detector(max_hands=1)
+
+detector = htm.hand_detector(max_hands=1, track_con=0.25, model_complexity=1)
 
 while True:
     success, img = cap.read()
@@ -56,12 +59,18 @@ while True:
 
     if len(lm_list) != 0:
         index_finger_tip = lm_list[8]
-        # print(index_finger_tip[1], index_finger_tip[2], WIDTH, HEIGHT)
-        x1 = int(np.interp(index_finger_tip[1], (0, WIDTH), (min_x - OFFSET, max_x + OFFSET)))
-        y1 = int(np.interp(index_finger_tip[2], (0, HEIGHT), (min_y - OFFSET, max_y + OFFSET)))
+        cv2.circle(img, tuple(map(int, index_finger_tip[1:])), 10, (0, 255, 0), cv2.FILLED)
+
+        x1 = np.interp(index_finger_tip[1], (OFFSET, WIDTH - OFFSET), (min_x, max_x))
+        y1 = np.interp(index_finger_tip[2], (OFFSET, HEIGHT - OFFSET), (min_y, max_y))
+
+        clocX = plocX + (x1 - plocX) / SMOOTHENING
+        clocY = plocY + (y1 - plocY) / SMOOTHENING
+
+        plocX, plocY = clocX, clocY
 
         # https://docs.microsoft.com/fr-fr/windows/win32/api/winuser/nf-winuser-mouse_event?redirectedfrom=MSDN
-        if detector.finger_is_up(img, 2):
+        if detector.finger_is_straight(img, 2, draw=False)[0]:
             length, img, _ = detector.find_distance(img, 8, 12)
             if length < 40:
                 user32.mouse_event(2, 0, 0, 0, 0)
@@ -69,10 +78,11 @@ while True:
                 user32.mouse_event(4, 0, 0, 0, 0)
                 time.sleep(0.1)
         else:
-            user32.SetCursorPos(x1, y1)
+            user32.SetCursorPos(int(clocX), int(clocY))
 
     # cv2.putText(img, str(int(fps)), (10, 70), cv2.FONT_HERSHEY_PLAIN, 3, (255, 0, 255), 3)
+    cv2.rectangle(img, (OFFSET, OFFSET), (WIDTH - OFFSET, HEIGHT - OFFSET), (255, 0, 255), 2)
+    cv2.imshow("Virtual Mouse", img)
 
-    cv2.imshow("Image", img)
     if cv2.waitKey(5) & 0xFF == ord("s"):
         break
