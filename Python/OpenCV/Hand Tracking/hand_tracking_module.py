@@ -67,6 +67,7 @@ class hand_detector:
         """
 
         self.find_position(img, hand_no, draw=False)
+
         if self.lmlist:
             finger = self.lmlist[(finger_no * 4 + 1) : (finger_no * 4 + 5)]
             positions = (mcp, pip, dip, tip) = [(x, y) for _, x, y in finger]
@@ -78,12 +79,6 @@ class hand_detector:
             return tip[1] < dip[1] < pip[1] < mcp[1]
         else:
             return False
-
-    def nb_fingers_up(self, img, hand_no: int = 0, treshold: int = 10) -> int:
-        """
-        Returns the number of fingers that are up on the hand n°hand_no.
-        """
-        return self.fingers_up(img, hand_no, treshold).count(True)
 
     def fingers_up(self, img, hand_no: int = 0, treshold: int = 10) -> List[bool]:
         """
@@ -108,6 +103,52 @@ class hand_detector:
         length = math.hypot(x2 - x1, y2 - y1)
 
         return length, img, [x1, y1, x2, y2, cx, cy]
+
+    def finger_is_straight(self, img, finger_no: int, hand_no: int = 0, treshold: float = 8.0, draw: bool = True):
+        """Returns whether or not the finger n°finger_no of the hand n°hand_no
+        is straight. The higher the treshold the "less straight" the finger
+        needs to be to return True"""
+
+        self.find_position(img, hand_no, draw=draw)
+
+        finger_points = [(x, y) for _, x, y in self.lmlist[(finger_no * 4 + 1) : (finger_no * 4 + 5)]]
+
+        a1, b1 = get_tendancy_curve(
+            [finger_points[0][0], finger_points[1][0]], [finger_points[0][1], finger_points[1][1]]
+        )
+        a2, b2 = get_tendancy_curve(
+            [finger_points[0][0], finger_points[3][0]], [finger_points[0][1], finger_points[3][1]]
+        )
+
+        if draw:
+            x1, y1 = 0, int(b1)
+            x2, y2 = int(img.shape[0] * 100), int(a1 * img.shape[0] * 100 + b1)
+            cv2.line(img, (x1, y1), (x2, y2), (255, 0, 0), 3)
+
+            x1, y1 = 0, int(b2)
+            x2, y2 = int(img.shape[0] * 100), int(a2 * img.shape[0] * 100 + b2)
+            cv2.line(img, (x1, y1), (x2, y2), (0, 0, 255), 3)
+
+        angle1 = math.degrees(math.atan(-a1))
+        angle2 = math.degrees(math.atan(-a2))
+
+        return abs(angle1 - angle2) < treshold, img
+
+
+def get_tendancy_curve(x_values, y_values):
+    """Returns the tendancy curve of a set of points of coords
+    x_values[n], y_values[n]"""
+
+    n = len(x_values)
+    try:
+        a = (sum(x * y for x, y in zip(x_values, y_values)) - (sum(x_values) * sum(y_values) / n)) / (
+            sum(x ** 2 for x in x_values) - (sum(x_values) ** 2) / n
+        )
+        b = sum(y_values) / n - a * (sum(x_values) / n)
+    except ZeroDivisionError:
+        a, b = 0, 0
+
+    return a, b
 
 
 def main():
