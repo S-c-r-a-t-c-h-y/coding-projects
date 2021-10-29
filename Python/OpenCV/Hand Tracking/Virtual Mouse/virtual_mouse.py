@@ -30,7 +30,7 @@ def get_screen_metrics():
 min_x, max_x, min_y, max_y = get_screen_metrics()
 # print(min_x, max_x, min_y, max_y)
 
-OFFSET = 80
+OFFSET = 100
 
 p_time = 0
 c_time = 0
@@ -53,9 +53,9 @@ while True:
     img = detector.find_hands(img, draw=True)
     lm_list = detector.find_position(img, draw=True)
 
-    # c_time = time.time()
-    # fps = 1 / (c_time - p_time)
-    # p_time = c_time
+    c_time = time.time()
+    fps = 1 / (c_time - p_time)
+    p_time = c_time
 
     if len(lm_list) != 0:
         index_finger_tip = lm_list[8]
@@ -70,7 +70,8 @@ while True:
         plocX, plocY = clocX, clocY
 
         # https://docs.microsoft.com/fr-fr/windows/win32/api/winuser/nf-winuser-mouse_event?redirectedfrom=MSDN
-        if detector.finger_is_straight(img, 2, draw=False)[0]:
+        straight, img = detector.finger_is_straight(img, 2, draw=False)
+        if straight:
             length, img, _ = detector.find_distance(img, 8, 12)
             if length < 40:
                 user32.mouse_event(2, 0, 0, 0, 0)
@@ -80,7 +81,9 @@ while True:
         else:
             user32.SetCursorPos(int(clocX), int(clocY))
 
-    # cv2.putText(img, str(int(fps)), (10, 70), cv2.FONT_HERSHEY_PLAIN, 3, (255, 0, 255), 3)
+    cv2.putText(img, str(int(fps)), (10, 60), cv2.FONT_HERSHEY_PLAIN, 2, (0, 255, 255), 2)
+    cv2.putText(img, "Press 's' to exit.", (10, 30), cv2.FONT_HERSHEY_PLAIN, 1, (0, 0, 255), 1)
+
     cv2.rectangle(img, (OFFSET, OFFSET), (WIDTH - OFFSET, HEIGHT - OFFSET), (255, 0, 255), 2)
     cv2.imshow("Virtual Mouse", img)
 
