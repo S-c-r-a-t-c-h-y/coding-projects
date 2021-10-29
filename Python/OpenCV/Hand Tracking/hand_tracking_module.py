@@ -112,6 +112,7 @@ class hand_detector:
         self.find_position(img, hand_no, draw=draw)
 
         finger_points = [(x, y) for _, x, y in self.lmlist[(finger_no * 4 + 1) : (finger_no * 4 + 5)]]
+        ys = [y for _, y in finger_points]
 
         a1, b1 = get_tendancy_curve(
             [finger_points[0][0], finger_points[1][0]], [finger_points[0][1], finger_points[1][1]]
@@ -123,16 +124,25 @@ class hand_detector:
         if draw:
             x1, y1 = 0, int(b1)
             x2, y2 = int(img.shape[0] * 100), int(a1 * img.shape[0] * 100 + b1)
-            cv2.line(img, (x1, y1), (x2, y2), (255, 0, 0), 3)
+            cv2.line(img, (x1, y1), (x2, y2), (255, 0, 0), 2)
 
             x1, y1 = 0, int(b2)
             x2, y2 = int(img.shape[0] * 100), int(a2 * img.shape[0] * 100 + b2)
-            cv2.line(img, (x1, y1), (x2, y2), (0, 0, 255), 3)
+            cv2.line(img, (x1, y1), (x2, y2), (0, 0, 255), 2)
 
         angle1 = math.degrees(math.atan(-a1))
         angle2 = math.degrees(math.atan(-a2))
 
-        return abs(angle1 - angle2) < treshold, img
+        if abs(angle1 - angle2) > treshold:
+            return False, img
+
+        if not (ys[0] <= ys[1] <= ys[2] <= ys[3]) and not (ys[0] >= ys[1] >= ys[2] >= ys[3]):
+            return False, img
+
+        return (
+            True,
+            img,
+        )
 
 
 def get_tendancy_curve(x_values, y_values):
