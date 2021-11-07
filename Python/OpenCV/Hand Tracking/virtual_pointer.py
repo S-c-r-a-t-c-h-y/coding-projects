@@ -65,7 +65,7 @@ while True:
             angle = 360 - abs(angle)
 
         # straight, _ = detector.finger_is_straight(img, 1, draw=False)
-        max_length = 150
+        max_length = 120
 
         percent_extension = np.interp(
             (math.hypot(x_values[3] - x_values[0], y_values[3] - y_values[0])), [40, max_length], [0, 1]

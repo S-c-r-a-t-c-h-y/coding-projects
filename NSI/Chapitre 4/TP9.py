@@ -8,4 +8,4 @@ def fib(n):
 start = time.time()
 n = int(input("fib(?) : "))
 res = fib(n)
-print(f"{fib(n) = }\nTemps d'exécution : {(time.time()-start):.5f}s")
+print(f"fib({n}) = {fib(n)}\nTemps d'exécution : {(time.time()-start):.10f}s")

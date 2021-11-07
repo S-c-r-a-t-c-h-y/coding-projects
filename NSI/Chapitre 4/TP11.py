@@ -2,18 +2,16 @@
 values = {}
 def s(n):
     """ calcul la nième valeur de la suite de Stern-Brocot """
-    
-    if n <= 1:
-        return n
     if n in values:
         return values[n]
-    if n % 2 == 0:
-        res = s(n//2)
-        values[n] = res
-        return res
-    res = s(n//2) + s(n//2 + 1)
-    values[n] = res
-    return res
+    if n <= 1:
+        v = n
+    elif n % 2 == 0:
+        v = s(n//2)
+    else:
+        v = s(n//2) + s(n//2 + 1)
+    values[n] = v
+    return v
 
 
 # for i in range(51):
