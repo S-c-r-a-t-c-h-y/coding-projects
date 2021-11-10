@@ -6,7 +6,7 @@ import time
 
 class HashTable:
     def __init__(self, modulo=2 ** 16):
-        self.__values = b = np.full((modulo,), Liste_chainee())
+        self.__values = np.full((modulo,), Liste_chainee())
         self.__modulo = modulo
 
     def hash(self, elem):
@@ -79,12 +79,12 @@ with open("hachage.txt", "r", encoding="utf-8") as f:
 for word in text.split():
     table[word] = 0
 
-d = {str(i): 0 for i in range(10000)}
+d = {str(i): 0 for i in range(50000)}
 start = time.time()
 
 for _ in range(1000):
     # a = "FEDS" in table
-    a = "957" in d
+    a = "14599" in d
 
 t = time.time() - start
 print(f"{t:.10f}")
