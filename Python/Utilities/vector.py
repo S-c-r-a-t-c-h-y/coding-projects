@@ -37,7 +37,7 @@ class Vector:
         return Vector(
             self.y * other.z - self.z * other.y,
             self.z * other.x - self.x * other.z,
-            self.x * other.y - other.y * self.x,
+            self.x * other.y - self.y * other.x,
         )
 
     def angle_between(self, other: Vector) -> float:
@@ -90,6 +90,18 @@ class Vector:
 
         return self.scalar_triple_product(v1, v2) == 0
 
+    def det(self, other: Vector) -> Union[int, float]:
+        """Returns the determinant of this vector with the 'other' vector (! vectors must only have two dimensions)"""
+        if not isinstance(other, type(self)):
+            raise TypeError(
+                f"unsupported operand type(s) for calculating determinant: 'Vector' and '{type(other).__name__}'"
+            )
+
+        if self.z != 0 or other.z != 0:
+            raise ValueError("'Vectors' objects must be two dimensional to calculate the determinant.")
+
+        return self.x * other.y - self.y * other.x
+
     def __add__(self, other: Vector) -> Vector:
         """Returns the result of the addition of this vector with the 'other' vector."""
         if not isinstance(other, type(self)):
@@ -121,6 +133,14 @@ class Vector:
 
         raise TypeError(f"unsupported operand type(s) for /: 'Vector' and '{type(other).__name__}'")
 
+    def __rmul__(self, other: Union[int, float]) -> Vector:
+        """Returns the result of the scalar multiplication of this vector with a number 'other'."""
+        return self.__mul__(other)
+
+    def __rtruediv__(self, other: Union[int, float]) -> Vector:
+        """Returns the result of the division (scalar multiplication by the inverse) of this vector with a number 'other'."""
+        return self.__truediv__(other)
+
     def __neg__(self) -> Vector:
         return self.__mul__(-1)
 
@@ -138,13 +158,45 @@ class Vector:
         """True if the vector is not equal to the null vector."""
         return self.x != 0 and self.y != 0 and self.z != 0
 
-    def __repr__(self) -> str:
+    def __getitem__(self, key):
+        if key not in (0, 1, 2):
+            raise IndexError(f"Invalid index : {key}.")
+
+        return self.x if key == 0 else self.y if key == 1 else self.z
+
+    def __setitem__(self, key, value):
+        if key not in (0, 1, 2):
+            raise IndexError(f"Invalid index : {key}.")
+        if not isinstance(value, (int, float)):
+            raise ValueError(f"'Vector' object cannot contain object from type {type(value).__name__}.")
+
+        if key == 0:
+            self.x = value
+        elif key == 1:
+            self.y = value
+        elif key == 2:
+            self.z = value
+
+    def __setattr__(self, attribute, value):
+
+        attributes = ("x", "y", "z")
+        if attribute in attributes:
+            if not isinstance(value, (int, float)):
+                raise ValueError(f"'Vector' object cannot contain object from type {type(value).__name__}.")
+            self.__dict__[attribute] = float(value)
+        else:
+            self.__dict__[attribute] = value
+
+    def __str__(self) -> str:
         return f"Vector({self.x}, {self.y}, {self.z})"
+
+    def __repr__(self) -> str:
+        return f"Vector(x={self.x}, y={self.y}, z={self.z})"
 
 
 if __name__ == "__main__":
-    v1 = Vector(1, 1, 1)
-    v2 = Vector(1, 3, 1)
+    v1 = Vector(-1, -2, 1)
+    v2 = Vector(2, 3, 3)
     v3 = Vector(2, 2, 2)
 
-    print(v1.coplanar(v2, v3))
+    print(v1.cross(v2))
