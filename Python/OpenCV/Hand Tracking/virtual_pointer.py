@@ -68,7 +68,7 @@ while True:
         max_length = 120
 
         percent_extension = np.interp(
-            (math.hypot(x_values[3] - x_values[0], y_values[3] - y_values[0])), [40, max_length], [0, 1]
+            (math.hypot(x_values[3] - x_values[0], y_values[3] - y_values[0])), [50, max_length], [0, 1]
         )
 
         root_x, root_y = finger_points[0]
