@@ -173,9 +173,12 @@ def eleves_professeur(conn, nom, prenom):
 
     rows = cur.fetchall()
 
-    print("Eleves ayant ce professeur en cours :")
-    for row in rows:
-        print(row)
+    if rows:
+        print("Eleves ayant ce professeur en cours :")
+        for row in rows:
+            print(row)
+    else:
+        print("Aucuns élèves n'ont ce professeur")
 
 
 def majBD(conn, file):

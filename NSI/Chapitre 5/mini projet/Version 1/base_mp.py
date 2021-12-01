@@ -136,18 +136,24 @@ def cursus_eleve(conn, nom, prenom):
 
 def eleves_cours(conn, IDCours):
     cur = conn.cursor()
+
+    cours_existe = bool(cur.execute(f"SELECT * FROM Cours WHERE IDCours='{IDCours}'").fetchall())
+
+    if not cours_existe:
+        print("Aucun cours ne correspond à cet ID.")
+        return
+
     cur.execute(
         f"SELECT Eleve.Nom, Eleve.Prenom FROM Eleve JOIN Cursus ON Cursus.IDEleve = Eleve.IDEleve WHERE Cursus.IDCours = '{IDCours}'"
     )
-
     rows = cur.fetchall()
 
     if rows:
         print("Elèves qui suivent ce cours :")
         for row in rows:
-            print(row)
+            print(row[0], row[1])
     else:
-        print("Personne ne suit ce cours / aucun cours ne correspond à cet ID.")
+        print("Personne ne suit ce cours.")
 
 
 def nb_eleves_cours(conn, IDCours):
