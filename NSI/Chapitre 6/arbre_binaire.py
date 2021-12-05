@@ -28,12 +28,16 @@ class AB:
         self.__ad = arbre
 
     def hauteur_tout_a_droite(self):
+        """Retourne la hauteur entre la racine et la feuille de l'arbre située la plus à droite"""
+
         if self.__ad is None:
             return 1
         hd = self.__ad.hauteur_tout_a_droite()
         return hd + 1
 
     def hauteur(self):
+        """Retourne la hauteur de l'arbre"""
+
         if self.__ag is None and self.__ad is None:
             return 1
         if self.__ag is None:
@@ -47,6 +51,8 @@ class AB:
         return max(hg, hd) + 1
 
     def taille(self):
+        """Retourne la taille de l'arbre"""
+
         if self.__ag is None and self.__ad is None:
             return 1
         if self.__ag is None:
@@ -59,6 +65,13 @@ class AB:
         hd = self.__ad.taille()
         return hg + hd + 1
 
+    def copy(self):
+        """Retourne une copie de l'arbre"""
+        new_ab = AB(self.__val)
+        new_ab.set_ad(self.__ad)
+        new_ab.set_ag(self.__ag)
+        return new_ab
+
     def __repr__(self):
         """Surcharge de la fonction print()"""
 
@@ -69,6 +82,8 @@ class AB:
         return str(AB_tuple(self))
 
     def __contains__(self, valeur):
+        """Surcharge de l'opérateur d'appartenance"""
+
         if self.__val == valeur:
             return True
         if self.__ag is None and self.__ad is None:
@@ -104,3 +119,5 @@ if __name__ == "__main__":
     # print(1 in arbre3)
     # print(2 in arbre3)
     # print(8 in arbre3)
+
+    pass

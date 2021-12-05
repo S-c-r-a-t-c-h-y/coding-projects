@@ -2,11 +2,12 @@ from abr import *
 
 
 def cle_max(abr):
-    """ fonction qui retourne la valeur maximale contenu dans un abr """
+    """fonction qui retourne la valeur maximale contenu dans un abr"""
     if abr != None:
         abr1 = abr
         while abr1.get_ad() != None:
-            pass
+            abr1 = abr1.get_ad()
+        return abr1.get_val()
 
 
 abr1 = ABR(4)
@@ -27,3 +28,12 @@ abr3.inserer(2)
 abr3.inserer(15)
 abr3.inserer(7)
 abr3.inserer(6)
+
+dessiner(abr1)
+print(cle_max(abr1))
+
+dessiner(abr2)
+print(cle_max(abr2))
+
+dessiner(abr3)
+print(cle_max(abr3))
