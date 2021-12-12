@@ -89,6 +89,12 @@ def classe_eleve(conn, nom, prenom):
 
 def nb_eleves_classe(conn, nom_classe):
     cur = conn.cursor()
+
+    classe_existe = bool(cur.execute(f"SELECT * FROM Classe WHERE Nom='{nom_classe}'").fetchall())
+    if not classe_existe:
+        print("Cette classe n'existe pas.")
+        return
+
     cur.execute(
         f"SELECT COUNT(*) FROM Eleve JOIN Classe ON Classe.IDClasse=Eleve.IDClasse WHERE Classe.Nom='{nom_classe}'"
     )
@@ -158,6 +164,13 @@ def eleves_cours(conn, IDCours):
 
 def nb_eleves_cours(conn, IDCours):
     cur = conn.cursor()
+
+    cours_existe = bool(cur.execute(f"SELECT * FROM Cours WHERE IDCours='{IDCours}'").fetchall())
+
+    if not cours_existe:
+        print("Aucun cours ne correspond à cet ID.")
+        return
+
     cur.execute(
         f"SELECT COUNT(*) FROM Eleve JOIN Cursus ON Cursus.IDEleve = Eleve.IDEleve WHERE Cursus.IDCours = '{IDCours}'"
     )

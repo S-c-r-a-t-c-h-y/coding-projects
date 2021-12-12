@@ -80,17 +80,23 @@ def classe_eleve(conn, nom, prenom):
 
     rows = cur.fetchall()
 
-    if rows:
+    if not (eleve_in(conn, nom, prenom)):
+        print("L'élève n'est pas dans l'établissement")
+    elif rows:
         print("Classe de l'élève :")
         print(rows[0][0])
-    elif not (eleve_in(conn, nom, prenom)):
-        print("L'élève n'est pas dans l'établissement")
     else:
         print("L'élève n'est dans aucune classe")
 
 
 def nb_eleves_classe(conn, nom_classe):
     cur = conn.cursor()
+
+    classe_existe = bool(cur.execute(f"SELECT * FROM Classe WHERE Nom='{nom_classe}'").fetchall())
+    if not classe_existe:
+        print("Cette classe n'existe pas.")
+        return
+
     cur.execute(
         f"SELECT COUNT(*) FROM Eleve JOIN Classe ON Classe.IDClasse=Eleve.IDClasse WHERE Classe.Nom='{nom_classe}'"
     )
@@ -138,6 +144,13 @@ def cursus_eleve(conn, nom, prenom):
 
 def eleves_cours(conn, IDCours):
     cur = conn.cursor()
+
+    cours_existe = bool(cur.execute(f"SELECT * FROM Cours WHERE IDCours='{IDCours}'").fetchall())
+
+    if not cours_existe:
+        print("Aucun cours ne correspond à cet ID.")
+        return
+
     cur.execute(
         f"SELECT Personne.Nom, Personne.Prenom FROM Personne JOIN Eleve ON Eleve.IDPersonne = Personne.IDPersonne JOIN Cursus ON Cursus.IDEleve = Eleve.IDEleve WHERE Cursus.IDCours = '{IDCours}'"
     )
@@ -147,13 +160,20 @@ def eleves_cours(conn, IDCours):
     if rows:
         print("Elèves qui suivent ce cours :")
         for row in rows:
-            print(row)
+            print(row[0], row[1])
     else:
         print("Personne ne suit ce cours / aucun cours ne correspond à cet ID.")
 
 
 def nb_eleves_cours(conn, IDCours):
     cur = conn.cursor()
+
+    cours_existe = bool(cur.execute(f"SELECT * FROM Cours WHERE IDCours='{IDCours}'").fetchall())
+
+    if not cours_existe:
+        print("Aucun cours ne correspond à cet ID.")
+        return
+
     cur.execute(
         f"SELECT COUNT(*) FROM Eleve JOIN Cursus ON Cursus.IDEleve = Eleve.IDEleve WHERE Cursus.IDCours = '{IDCours}'"
     )
@@ -167,6 +187,16 @@ def nb_eleves_cours(conn, IDCours):
 
 def eleves_professeur(conn, nom, prenom):
     cur = conn.cursor()
+
+    prof_existe = bool(
+        cur.execute(
+            f"SELECT Nom, Prenom FROM Personne JOIN Professeur ON Professeur.IDPersonne = Personne.IDPersonne WHERE Nom='{nom}' AND Prenom='{prenom}'"
+        ).fetchall()
+    )
+    if not prof_existe:
+        print("Ce professeur ne fais pas parti de l'établissement.")
+        return
+
     cur.execute(
         f"SELECT Personne.Nom, Personne.Prenom FROM Personne JOIN Eleve ON Personne.IDPersonne = Eleve.IDPersonne JOIN Cursus ON Eleve.IDEleve = Cursus.IDEleve JOIN Cours ON Cours.IDCours = Cursus.IDCours JOIN Professeur ON Cours.IDProfesseur = Professeur.IDProfesseur JOIN Personne AS p ON p.IDPersonne = Professeur.IDPersonne WHERE p.Nom = '{nom}' AND p.Prenom = '{prenom}'"
     )
