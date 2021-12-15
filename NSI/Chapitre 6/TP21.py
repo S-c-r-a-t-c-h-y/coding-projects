@@ -54,8 +54,13 @@ def est_un_ABR(arbre):
 arbre1 = AB(5, AB(4, AB(2), AB(3)), AB(8, AB(9), AB(1)))
 arbre2 = AB(8, AB(5, AB(2), AB(6)), AB(12, AB(10), AB(14)))
 
+arbre3 = AB(8, AB(4, AB(1), AB(6, None, AB(9))), AB(15, AB(11), AB(20)))
+
 dessiner(arbre1)
 print(est_un_ABR(arbre1))
 
 dessiner(arbre2)
 print(est_un_ABR(arbre2))
+
+# dessiner(arbre3)
+# print(est_un_ABR(arbre3))
