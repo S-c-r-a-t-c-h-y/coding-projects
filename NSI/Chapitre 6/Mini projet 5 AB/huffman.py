@@ -26,14 +26,26 @@ def frequence(chaine):
     return {lettre: chaine.count(lettre) for lettre in sorted(set(chaine), key=lambda x: chaine.count(x))}
 
 
+# def arbre_huffman(dico):
+#     """Fonction qui retourne l'arbre de huffman correspondant à partir du dictionnaire de fréquence dico"""
+#     arbres = sorted([AB(val, AB(cle)) for cle, val in dico.items()], key=lambda x: (x.get_val(), x.get_ag().get_val()))
+
+#     while len(arbres) > 1:
+#         ab1, ab2 = arbres.pop(0), arbres.pop(0)
+#         arbres.append(AB(ab1.get_val() + ab2.get_val(), ab1, ab2))
+#         arbres = sorted(arbres, key=lambda x: x.get_val())
+
+#     return arbres[0]
+
+
 def arbre_huffman(dico):
     """Fonction qui retourne l'arbre de huffman correspondant à partir du dictionnaire de fréquence dico"""
-    arbres = sorted([AB(val, AB(cle)) for cle, val in dico.items()], key=lambda x: (x.get_val(), x.get_ag().get_val()))
+    arbres = sorted([AB(val, AB(cle)) for cle, val in dico.items()], key=lambda x: x.get_ag().get_val())
 
     while len(arbres) > 1:
-        ab1, ab2 = arbres.pop(0), arbres.pop(0)
+        ab1 = arbres.pop(arbres.index(min(arbres, key=lambda x: x.get_val())))
+        ab2 = arbres.pop(arbres.index(min(arbres, key=lambda x: x.get_val())))
         arbres.append(AB(ab1.get_val() + ab2.get_val(), ab1, ab2))
-        arbres = sorted(arbres, key=lambda x: x.get_val())
 
     return arbres[0]
 
@@ -44,15 +56,8 @@ def code_huffman(chaine, arbre):
     ab1 = arbre
     for c in chaine:
         while ab1.get_val() != c:
-            if c in ab1.get_ag():
-                chaine_retour += "1"
-                ab1 = ab1.get_ag()
-            else:
-                chaine_retour += "0"
-                ab1 = ab1.get_ad()
-
-            # chaine_retour += "1" if (gauche := c in ab1.get_ag()) else "0"
-            # ab1 = ab1.get_ag() if gauche else ab1.get_ad()
+            chaine_retour += "1" if (gauche := c in ab1.get_ag()) else "0"
+            ab1 = ab1.get_ag() if gauche else ab1.get_ad()
         ab1 = arbre
 
     return chaine_retour
@@ -70,3 +75,7 @@ if __name__ == "__main__":
     # print(ab.hauteur())
     print(code_binaire)
     print(dechiffer(code_binaire, ab))
+
+
+# http://www.enseignement.polytechnique.fr/informatique/profs/Jean-Eric.Pin/PDF/Amphi7.pdf
+# http://eljjdx.canalblog.com/archives/2014/02/08/29128448.html
