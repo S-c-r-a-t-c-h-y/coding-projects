@@ -1,5 +1,4 @@
 from arbre_binaire import AB
-from dessiner_arbre import dessiner
 
 
 def parfait(ngd):
@@ -12,7 +11,6 @@ def parfait(ngd):
     if len(ngd) > 1:
         ngd_g = ngd[1 : len(ngd) // 2 + 1]
         ngd_d = ngd[len(ngd) // 2 + 1 :]
-        # print(ngd, ngd_g, ngd_d, sep="/")
         ab1.set_ag(parfait(ngd_g))
         ab1.set_ad(parfait(ngd_d))
     return ab1
@@ -29,14 +27,14 @@ def dechiffrer(chaine_morse):
     ab1 = ab
 
     for car in chaine_morse:
-        if car == ".":
+        if car == ".":  # .
             ab1 = ab1.get_ag()
-        elif car == "-":
+        elif car == "-":  # -
             ab1 = ab1.get_ad()
-        elif car == " ":
+        elif car == " ":  # espace entre les caractères
             retour += ab1.get_val()
             ab1 = ab  # réinitialise le parcours
-        else:
+        else:  # espace entre les mots
             retour += ab1.get_val()
             retour += " "
             ab1 = ab

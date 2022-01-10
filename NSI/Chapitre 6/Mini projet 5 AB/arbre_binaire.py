@@ -108,13 +108,13 @@ if __name__ == "__main__":
     # arbre2 = AB(5, AB(6), AB(2))
     # arbre3 = AB(1, AB(2, AB(4, AB(5), AB(6))))
 
-    # # print(arbre1.hauteur())
-    # # print(arbre2.hauteur())
-    # # print(arbre3.hauteur())
+    # print(arbre1.hauteur())
+    # print(arbre2.hauteur())
+    # print(arbre3.hauteur())
 
-    # # print(arbre1.taille())
-    # # print(arbre2.taille())
-    # # print(arbre3.taille())
+    # print(arbre1.taille())
+    # print(arbre2.taille())
+    # print(arbre3.taille())
 
     # print(1 in arbre3)
     # print(2 in arbre3)

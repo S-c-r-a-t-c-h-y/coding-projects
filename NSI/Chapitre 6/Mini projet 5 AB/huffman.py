@@ -22,20 +22,9 @@ def dechiffer(chaine_binaire, arbre_huffman):
 
 
 def frequence(chaine):
-    """Retourne un dictionnaire avec la fréquence de chaques lettres dans la chaine"""
+    """Retourne un dictionnaire avec la fréquence de chaques lettres dans la chaine
+    Il est garanti que le dictionnaire retourné est ordonné de la même manière pour une même chaine"""
     return {lettre: chaine.count(lettre) for lettre in sorted(set(chaine), key=lambda x: chaine.count(x))}
-
-
-# def arbre_huffman(dico):
-#     """Fonction qui retourne l'arbre de huffman correspondant à partir du dictionnaire de fréquence dico"""
-#     arbres = sorted([AB(val, AB(cle)) for cle, val in dico.items()], key=lambda x: (x.get_val(), x.get_ag().get_val()))
-
-#     while len(arbres) > 1:
-#         ab1, ab2 = arbres.pop(0), arbres.pop(0)
-#         arbres.append(AB(ab1.get_val() + ab2.get_val(), ab1, ab2))
-#         arbres = sorted(arbres, key=lambda x: x.get_val())
-
-#     return arbres[0]
 
 
 def arbre_huffman(dico):
