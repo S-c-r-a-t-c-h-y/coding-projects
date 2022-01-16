@@ -13,7 +13,6 @@ List of my most notable pieces of code :
 - A feature added to my pc to be able to give and execute commands using speech recognition ![work in progress](https://img.shields.io/badge/-Work%20in%20progress-orange)
 - An auto-dating system for files
 
-
 ## License
 
 This project is under an MIT license which means that you are free to reuse my code (crediting me is appreciated) as well as to suggest improvements and the like.
