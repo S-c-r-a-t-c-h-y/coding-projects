@@ -1,6 +1,4 @@
-def is_triplet(a, b, c):
-    return a ** 2 + b ** 2 == c ** 2
-
+# https://fr.wikipedia.org/wiki/Triplet_pythagoricien#Th%C3%A9or%C3%A8me_fondamental_d%C3%A9crivant_tous_les_triplets_primitifs
 
 p = 3
 q = 1
