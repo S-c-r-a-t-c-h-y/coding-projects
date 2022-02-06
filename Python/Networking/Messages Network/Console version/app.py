@@ -78,7 +78,7 @@ def host_server():
     # ip = get("https://api.ipify.org").text
 
     port = input("Port (leave blank for 8008): ")
-    port = port or 8008
+    port = int(port) or 8008
 
     server_thread = ServerThread(ip, port)
     main()
@@ -155,7 +155,7 @@ def join_server():
 
     port = input("Port (leave blank for 8008): ")
 
-    port = port or 8008
+    port = int(port) or 8008
     name = name or "user"
 
     client_thread = ClientThread(host, port, name)
