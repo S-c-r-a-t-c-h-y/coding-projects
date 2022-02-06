@@ -22,7 +22,6 @@ class ServerThread(threading.Thread):
         self.max_connections = max_connections
         self.connections = []
 
-        self.server = socket.socket()
         self.establish_server_connection()
 
         super().__init__(name="Server Thread")
@@ -31,7 +30,7 @@ class ServerThread(threading.Thread):
 
     def establish_server_connection(self):
         try:
-            self.server.bind((self.host_address, self.host_port))
+            self.server = socket.create_server((self.host_address, self.host_port))
         except socket.error as e:
             print(e)
 
@@ -65,7 +64,7 @@ class ServerThread(threading.Thread):
 
 def host_server():
     while True:
-        choice = int(input("Hosting ip address ?\n1) localhost (127.0.0.1)\n2) machine ip address\n"))
+        choice = int(input("Hosting IP address ?\n1) localhost (127.0.0.1)\n2) machine's ip address\n"))
         if choice == 1:
             ip = "127.0.0.1"
             break
@@ -97,7 +96,7 @@ class KeyboardThread(threading.Thread):
 
     def run(self):
         while True:
-            self.input_cbk(input())  # waits to get input + Return
+            self.input_cbk(str(input()))  # waits to get input + Return
 
 
 class ClientThread(threading.Thread):
@@ -106,7 +105,6 @@ class ClientThread(threading.Thread):
         self.host_port = host_port
         self.username = name
 
-        self.client = socket.socket()
         self.establish_client_connection()
 
         super().__init__(name=name)
@@ -124,7 +122,7 @@ class ClientThread(threading.Thread):
     def establish_client_connection(self):
         print("Waiting for connection response")
         try:
-            self.client.connect((self.host_address, self.host_port))
+            self.client = socket.create_connection((self.host_address, self.host_port))
             self.client.send(self.username.encode("utf-8"))
             print("Connection established with the server.")
         except socket.error as e:
@@ -142,10 +140,20 @@ class ClientThread(threading.Thread):
 
 def join_server():
     name = str(input("Enter your online name (defaults to 'user'): "))
-    host = input("Host IP adress (leave blank for localhost): ")
+
+    while True:
+        choice = int(input("Host IP address ?\n1) localhost (127.0.0.1)\n2) automatic connection\n"))
+        if choice == 1:
+            host = "127.0.0.1"
+            break
+        elif choice == 2:
+            host = ""
+            break
+        else:
+            print("Invalide choice, try again.")
+
     port = input("Port (leave blank for 8008): ")
 
-    host = host or "127.0.0.1"
     port = port or 8008
     name = name or "user"
 
