@@ -118,6 +118,7 @@ class ClientThread(threading.Thread):
                 print(res.decode("utf-8"))
             except:
                 print("Connection closed.")
+                break
 
     def establish_client_connection(self):
         print("Waiting for connection response")
