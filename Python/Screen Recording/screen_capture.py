@@ -4,7 +4,7 @@ from mss import mss
 import numpy as np
 
 
-def start_capture(recording=False, resolution=(1920, 1080), filename="recording.avi", fps=12.0):
+def start_capture(recording=False, resolution=(1920, 1080), filename="__recording.avi", fps=12.0):
 
     if recording:
         codec = cv2.VideoWriter_fourcc(*"XVID")
