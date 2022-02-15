@@ -1,6 +1,3 @@
-from random import *
-
-
 def tri_fusion(liste):
     """Fonction récursive qui trie la liste avec le tri fusion"""
     # Cas terminal
@@ -41,11 +38,3 @@ def fusion(liste1, liste2):
         liste_fusionnee.append(liste2[i2])
         i2 += 1
     return liste_fusionnee
-
-
-liste = [randint(0, 100) for i in range(20)]
-print("Liste non triée :")
-print(liste)
-liste_triee = tri_fusion(liste)
-print("Liste triée :")
-print(liste_triee)

@@ -3,9 +3,10 @@ from random import randint
 import matplotlib.pyplot as plt
 from insertion import tri_insertion
 from selection import tri_selection
+from tri_ABR import tri_par_ABR
 from temps import temps_execution
 
-liste_abs = [500 * n for n in range(1, 10)]
+liste_abs = [200 * n for n in range(1, 6)]
 
 
 def liste_image(tri):
@@ -22,4 +23,5 @@ def liste_image(tri):
 
 plt.scatter(liste_abs, liste_image(tri_insertion), color="blue")
 plt.scatter(liste_abs, liste_image(tri_selection), color="red")
+plt.scatter(liste_abs, liste_image(tri_par_ABR), color="green")
 plt.show()
