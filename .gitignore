@@ -55,6 +55,12 @@ __pycache__
 node_modules
 .env
 
+### PyInstaller Artefacts ###
+#############################
+*.spec
+build/
+dist/
+
 # Other #
 #########
 __*.*
