@@ -9,7 +9,6 @@ import os
 import re
 import io
 
-import time
 import datetime
 from typing import Optional, Union
 
@@ -26,19 +25,42 @@ except ImportError:
     print("Package installed !")
     print("Relaunch the programm now.")
 
+
+# -----------------------------------------------------------------------------------------------------------------------
+# ----------------------------------------------------- CONSTANTS -------------------------------------------------------
+# -----------------------------------------------------------------------------------------------------------------------
+
+INVALID_PASSWORD = "Invalid password."
+BANNED_MESSAGE = "Connection to the server impossible, you are banned from the chat."
+
+DEFAULT_PORT = 8008
+
+ENCODING = "utf-16le"
+ENCODING_ERROR_TYPE = "backslashreplace"
+VIDEO_CODEC = cv2.VideoWriter_fourcc(*"XVID")
+
+MSG_DATATYPE = "1"
+IMG_STREAM_DATATYPE = "2"
+STREAM_END_DATATYPE = "3"
+
+CAPSULE_SIZE = 500
+NAME_MAX_LENGTH = 100
+
+DEBUG = True
+
 # -----------------------------------------------------------------------------------------------------------------------
 # -------------------------------------------------- HELPER FUNCTIONS ---------------------------------------------------
 # -----------------------------------------------------------------------------------------------------------------------
 
 
-def encapsulate(data: bytes, head: bytes, fill_car=" ") -> bytes:
-    while len(head) != CAPSULE_SIZE:
-        head += bytes(fill_car, ENCODING)
-    return head + data
+def encapsulate(data: bytes, header: bytes, fill_car: str = " ", capsule_size=CAPSULE_SIZE) -> bytes:
+    while len(header) != capsule_size:
+        header += bytes(fill_car, ENCODING)
+    return header + data
 
 
-def decapsulate(data: bytes) -> bytes:
-    return data[:CAPSULE_SIZE], data[CAPSULE_SIZE:]
+def decapsulate(data: bytes, capsule_size=CAPSULE_SIZE) -> tuple[bytes, bytes]:
+    return data[:CAPSULE_SIZE], data[capsule_size:]
 
 
 def get_ip_addresses():
@@ -51,17 +73,40 @@ def get_ip_addresses():
     return addresses
 
 
+def get_servers(port, timeout=0.5):
+    """Returns a list of all servers you can connect to."""
+    available = []
+
+    for ip in get_ip_addresses():
+
+        s = socket.socket()
+        s.settimeout(timeout)
+        try:
+            s.connect((ip, port))
+        except (ConnectionRefusedError, OSError):
+            continue
+        except socket.timeout:
+            continue
+
+        available.append(ip)
+
+    return available
+
+
 def get_time():
+    """Returns the current date and time as such: DD/MM/YYYY, HH:MM"""
     return datetime.datetime.now().strftime("%d/%m/%Y, %H:%M")
 
 
 def array_to_bytes(x: np.ndarray) -> bytes:
+    """Converts a numpy array to bytes."""
     np_bytes = io.BytesIO()
     np.save(np_bytes, x, allow_pickle=True)
     return np_bytes.getvalue()
 
 
 def bytes_to_array(b: bytes) -> np.ndarray:
+    """Converts bytes to a numpy array."""
     np_bytes = io.BytesIO(b)
     return np.load(np_bytes, allow_pickle=True)
 
@@ -99,25 +144,6 @@ class ScreenRecorder:
 
 
 # -----------------------------------------------------------------------------------------------------------------------
-# ----------------------------------------------------- CONSTANTS -------------------------------------------------------
-# -----------------------------------------------------------------------------------------------------------------------
-
-INVALID_PASSWORD = "Invalid password."
-BANNED_MESSAGE = "Connection to the server impossible, you are banned from the chat."
-
-DEFAULT_PORT = 8008
-
-ENCODING = "utf-16le"
-ENCODING_ERROR_TYPE = "backslashreplace"
-
-MSG_DATATYPE = "1"
-IMG_STREAM_DATATYPE = "2"
-STREAM_END_DATATYPE = "3"
-
-CAPSULE_SIZE = 500
-NAME_MAX_LENGTH = 100
-
-# -----------------------------------------------------------------------------------------------------------------------
 # ---------------------------------------------------- SERVER SIDE ------------------------------------------------------
 # -----------------------------------------------------------------------------------------------------------------------
 
@@ -131,6 +157,7 @@ class Connection:
         self.address = address
 
         self.streaming = False
+        self.stream_count = 0
 
     def send(self, data: Union[str, bytes], encode: bool = False):
         """Send a message to the client side of the connection.
@@ -150,8 +177,10 @@ class Connection:
     def receive(self, packet_size: int = 2048, decode: bool = True) -> Union[str, bytes]:
         """Receives a message to the client side of the connection.
         There is option to decode or not the message."""
-
-        return self.client.recv(packet_size).decode(ENCODING) if decode else self.client.recv(packet_size)
+        try:
+            return self.client.recv(packet_size).decode(ENCODING) if decode else self.client.recv(packet_size)
+        except ConnectionError:
+            return None
 
     def is_up(self) -> bool:
         """Returns whether or not the client is still running."""
@@ -165,8 +194,10 @@ class Connection:
             print(f"Error while closing client {self.name} :\n{e}")
 
 
-class ServerThread(threading.Thread):
+class Server:
     def __init__(self, host_address: str, host_port: str, password: str, max_connections: int = 50):
+        self.alive = True
+
         self.host_address = host_address
         self.host_port = host_port
         self.password = password
@@ -176,13 +207,14 @@ class ServerThread(threading.Thread):
         self.connections = []
         self.blacklist = []
 
+        self.video_logers = {}
+
         self.host_client = None
 
         self.establish_server_connection()
 
-        super().__init__(name="Server Thread")
-        self.daemon = False
-        self.start()
+        self.auth_thread = threading.Thread(target=self.authentification_thread, daemon=False)
+        self.auth_thread.start()
 
     def establish_server_connection(self):
         """Creates the server with the provided ip and port number."""
@@ -194,16 +226,14 @@ class ServerThread(threading.Thread):
         self.server.listen(self.max_connections)
         print(f"Socket successfully bound to {self.host_address}:{self.host_port} and listening.\n")
 
-    def send_everyone(self, msg: Union[str, bytes], encode: bool = True):
-        """Sends a message to every clients of the server."""
-        for conn in self.connections:
-            conn.send_msg(msg, encode=encode)
-
-    def run(self):
+    def authentification_thread(self):
         """Thread that takes care of handling any new incoming connections to the server."""
 
-        while True:
-            client, address = self.server.accept()
+        while self.alive:
+            try:
+                client, address = self.server.accept()
+            except OSError:
+                break
             connection = Connection(client, address)
             if connection not in self.connections:
                 if address[0] in self.blacklist:  # ip has been banned and is on the blacklist
@@ -224,12 +254,22 @@ class ServerThread(threading.Thread):
                 else:  # server is password free
                     connection.send("0", encode=True)
 
+                name = connection.receive()
+                if name is None:
+                    continue
+
+                while name in [conn.name for conn in self.connections if conn != connection]:
+                    name = f"{name}_"
+
+                connection.send(name, encode=True)
+                connection.name = name
+
                 self.connections.append(connection)
+
                 # starts a thread to handle the communication between the server and the client.
-                thread = threading.Thread(target=self.connection_handler, args=(connection,), daemon=False)
+                thread = threading.Thread(target=self.connection_handler, args=(connection,), daemon=True)
                 thread.start()
 
-                time.sleep(0.1)
                 thread.name = connection.name
 
                 print(msg := f"Server message : '{connection.name}' ({connection.address[0]}:{connection.address[1]}) connected to the server.")
@@ -237,6 +277,13 @@ class ServerThread(threading.Thread):
                 self.log(f"{date} - {msg}")
 
                 self.send_everyone(f"{connection.name} joined the chat !")
+
+        print("Authentification thread stopped.")
+
+    def send_everyone(self, msg: Union[str, bytes], encode: bool = True):
+        """Sends a message to every clients of the server."""
+        for conn in self.connections:
+            conn.send_msg(msg, encode=encode)
 
     def send_pm(self, connection: Connection, target_name: str, content: str):
         """Sends a private message from the connection 'connection' to the connection whose name is 'target_name'.
@@ -317,26 +364,6 @@ class ServerThread(threading.Thread):
             response_msg = "You are not an administrator."
         connection.send_msg(response_msg)
 
-    def spy(self, connection: Connection, target_name: str):
-        """Bans a client from the server, preventing him from connecting again.
-        The connection from wich the command comes from need to be an administrator for this command to work."""
-
-        if self.is_administator(connection):  # checks whether or not the client that executed the command is an administator
-
-            msg = ""
-
-            found = False
-            for conn in self.connections:
-                if conn.name == target_name:
-                    found = True
-                    conn.send_msg(msg)
-                    conn.close()
-
-            response_msg = "User spyed." if found else "Invalid user."
-        else:  # client is not an administator
-            response_msg = "You are not an administrator."
-        connection.send_msg(response_msg)
-
     def is_administator(self, connection: Connection) -> bool:
         """Returns whether or not the connection is an administator of the server."""
         return self.host_client and self.host_client.getpeername() == connection.client.getsockname() and self.host_client.getsockname() == connection.client.getpeername()
@@ -344,19 +371,12 @@ class ServerThread(threading.Thread):
     def connection_handler(self, connection: Connection):
         """Thread handling the communication between a client and the server."""
 
-        name = connection.receive()
-
-        while name in [conn.name for conn in self.connections if conn != connection]:
-            name = f"{name}_"
-
-        connection.send(name, encode=True)
-        connection.name = name
-
-        time.sleep(0.5)
-
         while connection.is_up():
             try:
                 raw_data = connection.receive(10_000_000, decode=False)
+                if raw_data is None:  # means the connection has been closed
+                    break
+
                 header, res = decapsulate(raw_data)
                 header = header.decode(ENCODING).strip()
 
@@ -365,7 +385,8 @@ class ServerThread(threading.Thread):
             except ConnectionError:  # connection has been closed
                 break
             except Exception as e:
-                print(e)
+                if DEBUG:
+                    print(e)
                 continue
 
             if data_type == MSG_DATATYPE:
@@ -416,11 +437,6 @@ class ServerThread(threading.Thread):
             self.ban(connection, target_name, content)
             return
 
-        if res.startswith("!spy ") and len(parts := res.split(" ")[1:]) >= 1:  # command to spy other users (very ethical)
-            target_name = parts[0]
-            self.spy(connection, target_name)
-            return
-
         date = get_time()
         msg = f"{date} - {connection.name}: {res}"
 
@@ -430,18 +446,44 @@ class ServerThread(threading.Thread):
             if conn is not connection and conn.is_up():
                 conn.send_msg(msg)
 
-    def handle_stream(self, connection: Connection, frame: bytes):
-        connection.streaming = True
+    def handle_stream(self, connection: Connection, encapsulated_frame: bytes):
+        if connection.streaming == False:
+            connection.streaming = True
+            connection.stream_count += 1
+
+            out = self._create_video_writer(f"{connection.name}{connection.stream_count}")
+            self.video_logers[connection.name] = out
+
+            self.log(f"{get_time()}: {connection.name} started streaming.")
+
         for conn in self.connections:
             if conn is not connection and conn.is_up():
-                conn.send(frame)
+                conn.send(encapsulated_frame)
+                # for logs
+                _, frame = decapsulate(encapsulated_frame)
+                self.video_log(frame, connection)
 
     def handle_stream_end(self, connection: Connection):
         connection.streaming = False
+        self.video_logers[connection.name].release()
+        del self.video_logers[connection.name]
+
         for conn in self.connections:
             if conn is not connection and conn.is_up():
                 conn.send(encapsulate(bytes(connection.name, ENCODING, ENCODING_ERROR_TYPE), bytes(STREAM_END_DATATYPE, ENCODING, ENCODING_ERROR_TYPE)))
                 conn.send_msg(f"{connection.name} stopped streaming.")
+
+        self.log(f"{get_time()}: {connection.name} stopped streaming.")
+
+    def close_server(self):
+        """Properly closes the server."""
+
+        self.alive = False
+        for conn in self.connections:
+            conn.send_msg("Server is shutting down, you are going to be disconnected.")
+            conn.close()
+        self.server.close()
+        print("Server closed.")
 
     def log(self, log_msg: str):
         """Write a message to the log file."""
@@ -452,8 +494,18 @@ class ServerThread(threading.Thread):
             except UnicodeEncodeError:
                 print(f"Failed to log message : {log_msg}")
 
+    def video_log(self, frame: bytes, connection: Connection):
+        try:
+            frame = bytes_to_array(frame)
+        except ValueError:
+            return
+        self.video_logers[connection.name].write(frame)
 
-def host_server():
+    def _create_video_writer(self, name: str, resolution=(1920, 1080), fps=15.0):
+        return cv2.VideoWriter(f"__log_{self.host_address}-{self.host_port}-{name}.avi", VIDEO_CODEC, fps, resolution)
+
+
+def host_server() -> socket.SocketType:
     while True:
         try:
             choice = int(input("Hosting IP address ?\n1) localhost (127.0.0.1)\n2) machine's local ip address\n3) machine's public ip address\n4) all interfaces\n"))
@@ -480,7 +532,7 @@ def host_server():
 
     password = str(input("Enter a password (leave blank for no password) : "))
 
-    return ServerThread(ip, port, password)
+    return Server(ip, port, password)
 
 
 # -----------------------------------------------------------------------------------------------------------------------
@@ -504,7 +556,7 @@ class KeyboardThread(threading.Thread):
         self.stopped = True
 
 
-class ClientThread(threading.Thread):
+class Client:
     def __init__(self, host_address, host_port, name):
         self.host_address = host_address
         self.host_port = host_port
@@ -514,13 +566,36 @@ class ClientThread(threading.Thread):
         self.streaming = False
         self.streamcount = 0
 
-        super().__init__(name=name)
-        self.daemon = True
+        self.message_thread = threading.Thread(target=self.message_reception_thread, daemon=True)
 
         self.establish_client_connection()
         self.kthread = KeyboardThread(self.handle_input)
 
-    def run(self):
+    def establish_client_connection(self):
+        print("Waiting for connection response")
+        try:
+            self.denied = False
+            self.client = socket.create_connection((self.host_address, self.host_port))
+
+            if (response := self.client.recv(1024).decode(ENCODING)) == "1":  # server has a password
+                self.client.send(str(input("Enter server password : ")).encode(ENCODING, ENCODING_ERROR_TYPE))
+                print(response := self.client.recv(1024).decode(ENCODING))
+                if response == INVALID_PASSWORD:
+                    print("Connection denied, press ENTER to continue.")
+                    self.denied = True
+            elif response == BANNED_MESSAGE:
+                print(response)
+                self.denied = True
+
+            self.client.send(self.username.encode(ENCODING, ENCODING_ERROR_TYPE))
+            self.username = self.client.recv(1024).decode(ENCODING)
+            self.message_thread.start()
+
+        except socket.error as e:
+            print(e)
+        print()
+
+    def message_reception_thread(self):
         if self.denied:
             return
         print("Connection established with the server.")
@@ -558,35 +633,37 @@ class ClientThread(threading.Thread):
             except ConnectionError:
                 print("Connection closed, press ENTER to continue.")
                 break
-            except cv2.error:
-                continue
-            except EOFError:
-                continue
             except Exception as e:
-                print(e)
+                if DEBUG:
+                    print(e)
+                continue
 
-    def establish_client_connection(self):
-        print("Waiting for connection response")
+    def handle_input(self, inp: str):
+        """Callback called every time an keyboard input is sent that evaluates that input
+        and does actions accordingly."""
+
+        if inp == "!leave":
+            self.client.close()
+            return
+
+        elif inp == "!stream":
+            if self.streaming:
+                print("You are already streaming, close old stream with !stopstream to start a new one.")
+            else:
+                threading.Thread(target=self.stream, daemon=True).start()
+            return
+
+        elif inp == "!stopstream":
+            self.stopstream()
+            return
+
         try:
-            self.denied = False
-            self.client = socket.create_connection((self.host_address, self.host_port))
+            header = bytes(MSG_DATATYPE, ENCODING, ENCODING_ERROR_TYPE)
+            msg = str.encode(inp, ENCODING, ENCODING_ERROR_TYPE)
+            self.client.send(encapsulate(msg, header))
 
-            if (response := self.client.recv(1024).decode(ENCODING)) == "1":  # server has a password
-                self.client.send(str(input("Enter server password : ")).encode(ENCODING, ENCODING_ERROR_TYPE))
-                print(response := self.client.recv(1024).decode(ENCODING))
-                if response == INVALID_PASSWORD:
-                    print("Connection denied, press ENTER to continue.")
-                    self.denied = True
-            elif response == BANNED_MESSAGE:
-                print(response)
-                self.denied = True
-
-            self.client.send(self.username.encode(ENCODING, ENCODING_ERROR_TYPE))
-            self.username = self.client.recv(1024).decode(ENCODING)
-            self.start()
-        except socket.error as e:
-            print(e)
-        print()
+        except (ConnectionError, OSError):
+            pass
 
     def stream(self):
         self.streaming = True
@@ -615,31 +692,6 @@ class ClientThread(threading.Thread):
         else:
             print("You aren't streaming at the moment.")
 
-    def handle_input(self, inp: str):
-        # evaluate the keyboard input
-        if inp == "!leave":
-            self.client.close()
-            return
-
-        elif inp == "!stream":
-            if self.streaming:
-                print("You are already streaming, close old stream with !stopstream to start a new one.")
-            else:
-                threading.Thread(target=self.stream, daemon=True).start()
-            return
-
-        elif inp == "!stopstream":
-            self.stopstream()
-            return
-
-        try:
-            header = bytes(MSG_DATATYPE, ENCODING, ENCODING_ERROR_TYPE)
-            msg = str.encode(inp, ENCODING, ENCODING_ERROR_TYPE)
-            self.client.send(encapsulate(msg, header))
-
-        except (ConnectionError, OSError):
-            pass
-
 
 def get_ip_from_host():
     while True:
@@ -647,24 +699,45 @@ def get_ip_from_host():
         try:
             return socket.gethostbyname(choice)
         except socket.gaierror:
-            print("Invalid choice, try again.")
+            print("Invalid host, try again.")
 
 
-def get_ip() -> str:
+def chose_ip() -> str:
     choice = ""
     while not re.search("[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+", choice, re.M | re.I):
         choice = str(input("Enter host's IP address : "))
     return choice
 
 
+def chose_server(servers: list) -> str:
+    for i, server in enumerate(servers):
+        print(f"{i+1} : {server} - {socket.gethostbyaddr(server)[0]}")
+
+    while True:
+        try:
+            choice = int(input("Chose an ip from the list above : "))
+        except ValueError:
+            print("Invalide input, try again.")
+            continue
+
+        if 1 <= choice <= len(servers):
+            return servers[choice - 1]
+
+        print("Invalide choice, try again.")
+        continue
+
+
 def join_server():
     name = str(input("Enter your online name (defaults to 'user'): "))[:NAME_MAX_LENGTH]
+
+    port = input(f"Port (leave blank for {DEFAULT_PORT}): ")
+    port = int(port) if port else DEFAULT_PORT
 
     while True:
         try:
             choice = int(
                 input(
-                    "Host IP address ?\n1) localhost (127.0.0.1)\n2) automatic connection\n3) manual connection from host's PC name\n4) manual connection from host's IP address\n"
+                    "Host IP address ?\n1) localhost (127.0.0.1)\n2) automatic connection\n3) manual connection from host's PC name\n4) manual connection from host's IP address\n5) scan available servers\n"
                 )
             )
         except ValueError:
@@ -681,19 +754,24 @@ def join_server():
             host = get_ip_from_host()
             break
         elif choice == 4:
-            host = get_ip()
+            host = chose_ip()
             break
+        elif choice == 5:
+            if servers := get_servers(port):
+                host = chose_server(servers)
+                break
+            else:
+                print("No servers are currently available.")
+                return
         else:
             print("Invalide choice, try again.")
 
-    port = input(f"Port (leave blank for {DEFAULT_PORT}): ")
-    port = int(port) if port else DEFAULT_PORT
     name = name.replace(" ", "_") or "user"
 
-    client_thread = ClientThread(host, port, name)
+    client = Client(host, port, name)
+    client.message_thread.join()
 
-    client_thread.join()
-    client_thread.kthread.stop()
+    client.kthread.stop()
 
     main()
 
@@ -710,17 +788,24 @@ def main():
     global hosted_server
 
     while True:
-        choice = int(input("1) Host a server\n2) Join a chat server\n3) Quit\n"))
+        try:
+            choice = int(input("1) Host a server\n2) Join a chat server\n3) Quit\n"))
+        except ValueError:
+            print("Invalide input, try again.")
+            continue
+
         if choice == 1:
             if hosted_server:
-                print("Can only host 1 server.")
+                print("You can only host 1 server.")
             else:
                 hosted_server = host_server()
         elif choice == 2:
             join_server()
             break
         elif choice == 3:
-            return
+            if hosted_server:
+                hosted_server.close_server()
+            quit()
         else:
             print("Invalid choice, try again.")
 
