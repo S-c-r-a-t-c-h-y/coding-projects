@@ -47,6 +47,7 @@ Thumbs.db
 ############################
 __pycache__
 .mypy_cache
+!__init__.py
 
 ### Node.JS ###
 ###############
