@@ -1,4 +1,5 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5.QtCore import Qt
 
 
 class ChatTab(QtWidgets.QWidget):
@@ -43,6 +44,7 @@ class ChatTab(QtWidgets.QWidget):
             "</style></head><body style=\" font-family:'Source Code Pro'; font-size:10pt; font-weight:400; font-style:normal;\">\n"
             '<p style="-qt-paragraph-type:empty; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"><br /></p></body></html>'
         )
+        self.chat_browser.setOpenExternalLinks(True)
         self.chat_browser.setObjectName("chat_browser")
         self.chat_layout.addWidget(self.chat_browser, 1, 0, 1, 2)
 
@@ -54,5 +56,12 @@ class ChatTab(QtWidgets.QWidget):
     def clear_chat(self):
         self.chat_browser.clear()
 
-    def print_to_chat(self, msg=""):
+    def print_to_chat(self, msg="", align=Qt.AlignLeft):
         self.chat_browser.append(str(msg))
+        self.chat_browser.setAlignment(align)
+
+    def align_left(self):
+        self.chat_browser.setAlignment(Qt.AlignLeft)
+
+    def align_right(self):
+        self.chat_browser.setAlignment(Qt.AlignRight)

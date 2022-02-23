@@ -3,6 +3,8 @@
 # -----------------------------------------------------------------------------------------------------------------------
 from PyQt5.QtWidgets import QMessageBox
 from PyQt5 import QtWidgets
+from PyQt5.QtCore import Qt
+
 
 import socket
 import threading
@@ -143,10 +145,11 @@ class App:
                 client.handle_input(txt)
                 return
 
-            client.handle_input(txt)
+            ui_txt = f"{txt} <strong>~ <font color=purple>you</font> - {get_time()}</strong>"
 
-            txt = f"{get_time()} - <font color=purple>you</font>: {txt}"
-            chat.print_to_chat(txt)
+            chat.print_to_chat(ui_txt, Qt.AlignRight)
+
+            client.handle_input(txt)
 
     def admin_send_msg(self):
         if txt := self.ui.admin_input.text():

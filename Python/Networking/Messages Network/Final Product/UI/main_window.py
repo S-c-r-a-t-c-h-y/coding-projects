@@ -1,6 +1,8 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QMessageBox
 
+from helpers.constants import DEFAULT_PORT
+
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -61,7 +63,7 @@ class Ui_MainWindow(object):
         font = QtGui.QFont()
         font.setPointSize(14)
         self.join_port_input.setFont(font)
-        self.join_port_input.setText("8008")
+        self.join_port_input.setText(f"{DEFAULT_PORT}")
         self.join_port_input.setAlignment(QtCore.Qt.AlignCenter)
         self.join_port_input.setPlaceholderText("Enter a port number.")
         self.join_port_input.setClearButtonEnabled(False)
@@ -123,6 +125,7 @@ class Ui_MainWindow(object):
         self.join_password_input.setGeometry(QtCore.QRect(20, 470, 881, 71))
         font = QtGui.QFont()
         font.setPointSize(14)
+        self.join_password_input.setEchoMode(2)
         self.join_password_input.setFont(font)
         self.join_password_input.setText("")
         self.join_password_input.setAlignment(QtCore.Qt.AlignCenter)
@@ -160,7 +163,7 @@ class Ui_MainWindow(object):
         font = QtGui.QFont()
         font.setPointSize(14)
         self.host_port_input.setFont(font)
-        self.host_port_input.setText("8008")
+        self.host_port_input.setText(f"{DEFAULT_PORT}")
         self.host_port_input.setAlignment(QtCore.Qt.AlignCenter)
         self.host_port_input.setPlaceholderText("Enter a port number.")
         self.host_port_input.setClearButtonEnabled(False)
@@ -193,6 +196,7 @@ class Ui_MainWindow(object):
         self.host_password_input.setGeometry(QtCore.QRect(20, 460, 851, 71))
         font = QtGui.QFont()
         font.setPointSize(14)
+        self.host_password_input.setEchoMode(2)
         self.host_password_input.setFont(font)
         self.host_password_input.setText("")
         self.host_password_input.setAlignment(QtCore.Qt.AlignCenter)

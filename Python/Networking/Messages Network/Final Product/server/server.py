@@ -117,7 +117,7 @@ class Server:
                     connection.send("0", encode=True)
 
                 name = connection.receive()
-                if name is None:
+                if name is None or name == "":
                     continue
 
                 while name in [conn.name for conn in self.connections if conn != connection]:
@@ -297,11 +297,8 @@ class Server:
             self.send_pm(connection, target_name, content)
             return
 
-        t = get_time()
-        date = get_full_time()
-
-        msg = f"""{t} - <font color=blue>{connection.name}</font>: {res}"""
-        log_msg = f"{date} - {connection.name}: {res}"
+        msg = f"""<strong>{get_time()} - <font color=blue>{connection.name}</font> ~</strong> {res}"""
+        log_msg = f"{get_full_time()} - {connection.name}: {res}"
 
         self.log(log_msg)
         self.ui.print_to_admin(msg)
@@ -317,6 +314,10 @@ class Server:
 
             out = self._create_video_writer(f"{connection.name}{connection.stream_count}")
             self.video_logers[connection.name] = out
+
+            for conn in self.connections:
+                if conn is not connection and conn.is_up():
+                    conn.send_msg(f"{get_time()} - <font color=green>{connection.name}</font> started streaming.")
 
             log_msg = f"{get_full_time()}: {connection.name} started streaming."
             self.log(log_msg)
@@ -339,7 +340,7 @@ class Server:
         for conn in self.connections:
             if conn is not connection and conn.is_up():
                 conn.send(encapsulate(bytes(connection.name, ENCODING, ENCODING_ERROR_TYPE), bytes(STREAM_END_DATATYPE, ENCODING, ENCODING_ERROR_TYPE)))
-                conn.send_msg(f"{connection.name} stopped streaming.")
+                conn.send_msg(f"{get_time()} - <font color=green>{connection.name}</font> stopped streaming.")
 
         log_msg = f"{get_full_time()}: {connection.name} stopped streaming."
         self.log(log_msg)
