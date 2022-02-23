@@ -1,3 +1,8 @@
+# Other #
+#########
+__log*.*
+__.emul_linux
+
 # Compiled source #
 ###################
 *.com
@@ -56,12 +61,8 @@ __pycache__
 node_modules
 .env
 
-### PyInstaller Artefacts ###
-#############################
-*.spec
-build/
-dist/
-
-# Other #
-#########
-__*.*
+# ### PyInstaller Artefacts ###
+# #############################
+# *.spec
+# build/
+# dist/
