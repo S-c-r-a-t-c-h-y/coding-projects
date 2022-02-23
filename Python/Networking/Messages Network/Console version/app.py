@@ -74,7 +74,9 @@ def get_ip_addresses():
 
 
 def get_servers(port, timeout=0.5):
-    """Returns a list of all servers you can connect to."""
+    """Returns a list of all servers you can connect to.
+    A shorter timeout value can reduce the operation time but may cause some available servers to be forgotten."""
+
     available = []
 
     for ip in get_ip_addresses():
