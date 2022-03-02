@@ -1,4 +1,4 @@
-Set oShell = CreateObject ("Wscript.Shell") 
+Set oShell = CreateObject ("Wscript.Shell")
 Dim strArgs
-strArgs = "cmd /c virtual_mouse.bat"
+strArgs = "cmd /c pythonw virtual_mouse.py"
 oShell.Run strArgs, 0, false
