@@ -1,8 +1,6 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtCore import Qt
 
-from helpers.constants import START_STREAM_UI_MSG
-
 
 class ChatTab(QtWidgets.QWidget):
     def __init__(self, name, app, ui):
@@ -34,13 +32,13 @@ class ChatTab(QtWidgets.QWidget):
         self.chat_input.setPlaceholderText("Type here and hit enter to send message.")
         self.chat_input.setObjectName("chat_input")
         self.chat_layout.addWidget(self.chat_input, 2, 0, 1, 1)
-        self.chat_start_stop_stream_button = QtWidgets.QPushButton(self.gridLayoutWidget_2)
+        self.chat_send_files_button = QtWidgets.QPushButton(self.gridLayoutWidget_2)
         font = QtGui.QFont()
         font.setPointSize(12)
-        self.chat_start_stop_stream_button.setFont(font)
-        self.chat_start_stop_stream_button.setText(START_STREAM_UI_MSG)
-        self.chat_start_stop_stream_button.setObjectName("chat_start_stop_stream_button")
-        self.chat_layout.addWidget(self.chat_start_stop_stream_button, 2, 3, 1, 1)
+        self.chat_send_files_button.setFont(font)
+        self.chat_send_files_button.setText("Send File")
+        self.chat_send_files_button.setObjectName("chat_send_files_button")
+        self.chat_layout.addWidget(self.chat_send_files_button, 2, 3, 1, 1)
         self.chat_browser = QtWidgets.QTextBrowser(self.gridLayoutWidget_2)
         font = QtGui.QFont()
         font.setFamily("Source Code Pro")
@@ -62,14 +60,23 @@ class ChatTab(QtWidgets.QWidget):
 
         self.chat_input.returnPressed.connect(lambda: self._app.send_msg(self._name))
         self.chat_send_button.clicked.connect(lambda: self._app.send_msg(self._name))
-        self.chat_start_stop_stream_button.clicked.connect(lambda: self._app.stream(self._name))
+        self.chat_send_files_button.clicked.connect(lambda: self._app.send_file(self._name))
 
     def clear_chat(self):
         self.chat_browser.clear()
 
-    def print_to_chat(self, msg="", align=Qt.AlignLeft):
+    def print_to_chat(self, msg: str = "", align=Qt.AlignLeft):
         self.chat_browser.append(str(msg))
-        self.chat_browser.setAlignment(align)
+        # self.chat_browser.setAlignment(align)
+        self.chat_browser.setAlignment(Qt.AlignLeft)
+
+    def insert_image(self, path_to_file: str):
+        document = self.chat_browser.document()
+        cursor = QtGui.QTextCursor(document)
+
+        cursor.movePosition(QtGui.QTextCursor.MoveOperation.End)
+        cursor.insertImage(path_to_file)
+        self.chat_browser.setAlignment(Qt.AlignLeft)
 
     def align_left(self):
         self.chat_browser.setAlignment(Qt.AlignLeft)

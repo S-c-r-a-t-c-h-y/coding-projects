@@ -151,6 +151,16 @@ class App:
 
             client.handle_input(txt)
 
+    def send_file(self, chat_name):
+        chat = self.ui.chats[chat_name]
+        client = self.clients[chat_name]
+
+        filename, filter = self.ui.open_file_name_dialog()
+        if not filename:
+            return
+
+        client.send_file(filename, filter)
+
     def admin_send_msg(self):
         if txt := self.ui.admin_input.text():
             self.ui.admin_input.setText("")
@@ -173,18 +183,6 @@ class App:
 
             self.ui.print_to_admin(txt)
             self.hosted_server.send_everyone(txt)
-
-    def stream(self, chat_name):
-        chat = self.ui.chats[chat_name]
-        client = self.clients[chat_name]
-
-        button = chat.chat_start_stop_stream_button
-        if button.text() == START_STREAM_UI_MSG:
-            client.start_stream()
-            button.setText(STOP_STREAM_UI_MSG)
-        else:
-            client.stop_stream()
-            button.setText(START_STREAM_UI_MSG)
 
     def remove_dead_clients_thread(self):
         while True:

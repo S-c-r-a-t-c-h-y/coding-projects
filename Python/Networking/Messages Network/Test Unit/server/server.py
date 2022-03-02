@@ -5,6 +5,7 @@ from typing import Optional, Union
 import io
 import threading
 import cv2
+import os
 
 
 class Connection:
@@ -262,6 +263,9 @@ class Server:
             elif data_type == STREAM_END_DATATYPE:
                 self.handle_stream_end(connection)
 
+            elif data_type in {FILE_DATATYPE, IMAGE_DATATYPE}:
+                self.receive_file(connection, res, header)
+
         # the connection has been lost or closed
         # removes the client from the connections list and logs it
 
@@ -342,6 +346,21 @@ class Server:
 
         log_msg_html = f"{get_full_time()}: <font color=blue>{connection.name}</font> stopped streaming."
         self.ui.print_to_admin(log_msg_html)
+
+    def receive_file(self, connection: Connection, data: bytes, header: str):
+
+        if (data_type := header.split(" ")[0]) == FILE_DATATYPE:
+            filename = " ".join(header.split(" ")[2:])
+            name = filename.split("/")[-1]
+            new_name = f"{connection.name}_{name}"
+
+            with open(new_name, "ab") as f:
+                f.write(data)
+
+        elif data_type == IMAGE_DATATYPE:
+            for conn in self.connections:
+                if conn is not connection and conn.is_up():
+                    conn.send(encapsulate(data, header.encode(ENCODING, ENCODING_ERROR_TYPE)))
 
     def close_server(self):
         """Properly closes the server."""

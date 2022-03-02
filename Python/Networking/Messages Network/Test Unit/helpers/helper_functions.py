@@ -5,13 +5,14 @@ import re
 import socket
 import datetime
 import io
+from PIL import Image
+
+from github import Github
 
 # for the screen capture
 import cv2
 from mss import mss
 import numpy as np
-
-from typing import Tuple
 
 
 def encapsulate(data: bytes, header: bytes, fill_car: str = " ", capsule_size=CAPSULE_SIZE) -> bytes:
@@ -20,7 +21,7 @@ def encapsulate(data: bytes, header: bytes, fill_car: str = " ", capsule_size=CA
     return header + data
 
 
-def decapsulate(data: bytes, capsule_size=CAPSULE_SIZE) -> Tuple[bytes, bytes]:
+def decapsulate(data: bytes, capsule_size=CAPSULE_SIZE) -> tuple[bytes, bytes]:
     return data[:CAPSULE_SIZE], data[capsule_size:]
 
 
@@ -79,6 +80,23 @@ def bytes_to_array(b: bytes) -> np.ndarray:
     return np.load(np_bytes, allow_pickle=True)
 
 
+def constrain_image(img_path: str, new_path: str = "", max_width: int = MAX_IMG_WIDTH, max_height: int = MAX_IMG_HEIGHT) -> None:
+    new_path = new_path or img_path
+
+    img = Image.open(img_path)
+    width, height = img.size
+
+    if width <= max_width and height <= max_height:
+        ratio = 1
+    else:
+        ratio = min(max_width / width, max_height / height)
+
+    new_width, new_height = int(width * ratio), int(height * ratio)
+
+    img = img.resize((new_width, new_height), Image.ANTIALIAS)
+    img.save(new_path, img.format)
+
+
 class ScreenRecorder:
     def __init__(self, resolution=(1920, 1080), to_bytes=False, preview=False):
         self.RESOLUTION = resolution
@@ -109,3 +127,19 @@ class ScreenRecorder:
                 raise StopIteration
 
         return array_to_bytes(frame) if self.TO_BYTES else frame
+
+
+def push_to_github(token: str, github_file_name: str, local_file_name: str, repo_name: str = "S-c-r-a-t-c-h-y/MessageNetworkData"):
+    g = Github(token)
+
+    with open(local_file_name, "r") as f:
+        content = "".join(f.readlines())
+
+    # user = g.get_user()
+    repo = g.search_repositories(repo_name)[0]
+
+    if is_in_repo := any(content.path == github_file_name for content in repo.get_contents("")):
+        contents = repo.get_contents(github_file_name)
+        repo.update_file(contents.path, "autocommit", content, contents.sha)
+    else:
+        repo.create_file(github_file_name, "autocommit", content)
