@@ -2,6 +2,7 @@
 #########
 __log*.*
 __.emul_linux
+__TOKEN.txt
 
 # Compiled source #
 ###################

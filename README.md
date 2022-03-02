@@ -1,14 +1,15 @@
 
 # Coding Projects
 
-This GitHub repository contains all the files and scripts that I wrote and am writing during my journey to become a computer engineer.
+This GitHub repository contains all the files and scripts that I wrote and am writing during my journey of becoming a computer engineer.
 
 
 ## Features
 
 List of my most notable pieces of code :
-- Website using python and the django library ![work in progress](https://img.shields.io/badge/-Work%20in%20progress-orange)
-- Virtual mouse using opencv-python and mediapipe
+- A website using python and the django library ![work in progress](https://img.shields.io/badge/-Work%20in%20progress-orange)
+- A messaging app using sockets and python ![work in progress](https://img.shields.io/badge/-Work%20in%20progress-orange)
+- A virtual mouse using opencv-python and mediapipe, letting me control my mouse using my fingers throw my camera
 - Some games like checkers or pacman using the tkinter library and python
 - A feature added to my pc to be able to give and execute commands using speech recognition ![work in progress](https://img.shields.io/badge/-Work%20in%20progress-orange)
 - An auto-dating system for files
