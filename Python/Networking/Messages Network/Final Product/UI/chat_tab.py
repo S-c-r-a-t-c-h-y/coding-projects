@@ -6,6 +6,7 @@ from helpers.constants import START_STREAM_UI_MSG
 
 class ChatTab(QtWidgets.QWidget):
     def __init__(self, name, app, ui):
+        print("creating chat")
         self._name = name
         self._app = app
 
@@ -64,12 +65,14 @@ class ChatTab(QtWidgets.QWidget):
         self.chat_send_button.clicked.connect(lambda: self._app.send_msg(self._name))
         self.chat_start_stop_stream_button.clicked.connect(lambda: self._app.stream(self._name))
 
+        print("created chat")
+
     def clear_chat(self):
         self.chat_browser.clear()
 
     def print_to_chat(self, msg="", align=Qt.AlignLeft):
         self.chat_browser.append(str(msg))
-        self.chat_browser.setAlignment(align)
+        # self.chat_browser.setAlignment(align)
 
     def align_left(self):
         self.chat_browser.setAlignment(Qt.AlignLeft)

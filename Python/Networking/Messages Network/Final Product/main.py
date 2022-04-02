@@ -11,7 +11,7 @@ import threading
 
 import time
 
-from requests import get
+import requests
 
 from helpers import *
 from UI import ChatTab, Ui_MainWindow
@@ -77,7 +77,9 @@ class App:
                 self.ui.join_serverlist_combo_box.clear()
 
             for ip in servers:
-                self.ui.join_serverlist_combo_box.addItem(f"{ip}:{port} - {socket.gethostbyaddr(ip)[0]}")
+                name = f"{ip}:{port} - {socket.gethostbyaddr(ip)[0]}"
+                if self.ui.join_serverlist_combo_box.findText(name) == -1:
+                    self.ui.join_serverlist_combo_box.addItem(name)
 
     def host_server(self):
         global debug
@@ -87,7 +89,7 @@ class App:
                 "Can't host multiple servers",
                 "You are already hosting a server.",
                 details=f"You host a server at the following address : {self.host_ip}:{self.host_port}",
-                icon=QMessageBox.Warning,
+                icon=QMessageBox.Critical,
             )
             return
 
@@ -98,7 +100,12 @@ class App:
             hostname = socket.gethostname()
             ip = socket.gethostbyname(hostname)
         elif combo_box_index == 2:
-            ip = get("https://api.ipify.org").text
+            try:
+                ip = requests.get("https://api.ipify.org").text
+            except requests.exceptions.ConnectionError:
+                self.ui.show_popup("Failed to host server", "You do not currently have a public IP address (e.g you're not connected to internet).", icon=QMessageBox.Critical)
+                return
+
         elif combo_box_index == 3:
             ip = ""
 
@@ -145,7 +152,7 @@ class App:
                 client.handle_input(txt)
                 return
 
-            ui_txt = f"{txt} <strong>~ <font color=purple>you</font> - {get_time()}</strong>"
+            ui_txt = f"<strong>{get_time()} - <font color=purple>you</font> ~ </strong>{txt}"
 
             chat.print_to_chat(ui_txt, Qt.AlignRight)
 

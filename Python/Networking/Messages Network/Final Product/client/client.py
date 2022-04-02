@@ -20,6 +20,7 @@ class Client:
         self.password = password or " "
 
         self.closed_streams = []
+        self.stream_windows = {}
         self.streaming = False
         self.streamcount = 0
 
@@ -81,7 +82,7 @@ class Client:
                     frame = bytes_to_array(res)
                     streamer, id = header.split(" ")[1], header.split(" ")[2]
 
-                    window_name = f"{streamer} - press 'q' to close the stream"
+                    self.stream_windows[streamer] = f"{streamer} - press 'q' to close the stream"
 
                     if f"{streamer}{id}" not in self.closed_streams:
                         if cv2.getWindowProperty(window_name, cv2.WND_PROP_VISIBLE) == 0:

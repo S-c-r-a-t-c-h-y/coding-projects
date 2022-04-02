@@ -31,6 +31,7 @@ def get_ip_addresses():
         device = re.search("[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+", device, re.M | re.I)
         if device is not None:
             addresses.append(device.group(0))
+    addresses.append("127.0.0.1") # adds localhost
     return addresses
 
 
