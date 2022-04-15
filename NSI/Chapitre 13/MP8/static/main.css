@@ -1,0 +1,51 @@
+h1 {
+  font-size: 2em;
+  color: rgb(100, 0, 100);
+  text-align: center;
+  font-family: 'Times New Roman', Times, serif;
+}
+
+html {
+  size: 100%;
+  background: rgb(238, 174, 202);
+  background: radial-gradient(circle, rgba(238, 174, 202, 1) 0%, rgba(148, 187, 233, 1) 100%);
+  background-repeat:round;
+  background-size: 100%;
+  font-size: 30px;
+}
+
+p {
+  text-align: center;
+  font-size: 1em;
+  color: cornflowerblue;
+}
+
+img {
+  display: block;
+  margin: 0px auto;
+  width: 4em;
+  height: 4em;
+}
+
+a {
+  font-size: 20px;
+}
+
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.meteo-info {
+  width: auto;
+  border: thick dashed white;
+  color:darkblue;
+  padding: 20px;
+  font-size: 1em;
+  font-family:'Courier New', Courier, monospace;
+}
+
+.city-form {
+  text-align: center;
+}

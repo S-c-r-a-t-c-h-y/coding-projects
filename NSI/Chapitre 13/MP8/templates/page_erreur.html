@@ -1,0 +1,17 @@
+<!doctype html>
+<html lang="fr">
+    <head>
+        <meta charset="utf-8" />
+        <title>Supersite - Erreur</title>
+        <! -- donne l'adresse vers la feuille de style, elle est dans le repertoire static et se nomme main.css -->
+        <link rel ="stylesheet" type="text/css" href="{{ url_for('static', filename='main.css') }}">
+    </head>
+    
+    <body>
+        <a href="{{ url_for('index') }}"> Accueil </a>
+        <h1 > Erreur </h1>
+
+        <p> La ville spécifiée dans l'url n'est pas valide, merci d'entrer une ville valide. </p>
+    <br>
+    </body>
+</html>

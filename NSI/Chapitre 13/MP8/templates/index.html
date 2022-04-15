@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="fr">
+    <head>
+        <meta charset="utf-8" />
+        <title>Supersite - Sommaire</title>
+        <! -- donne l'adresse vers la feuille de style, elle est dans le repertoire static et se nomme main.css -->
+        <link rel ="stylesheet" type="text/css" href="{{ url_for('static', filename='main.css') }}">
+    </head>
+    
+    <body>
+        <h1 > Bienvenue ! </h1>
+        <div class="city-form">
+            <p>
+                Choisissez une ville
+            </p>
+            <form method="GET" action="{{ url_for('meteo') }}">
+                <select name="ville">
+                    <option value="Evian-les-bains">Evian</option>
+                    <option value="thonon-les-bains">Thonon</option>
+                    <option value="chatel-74">Chatel</option>
+                </select>
+                <button type="submit"> selectionner </button>
+            </form>
+        </div>
+    </body>
+</html>

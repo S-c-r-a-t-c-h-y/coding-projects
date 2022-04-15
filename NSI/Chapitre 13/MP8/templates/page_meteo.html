@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="fr">
+    <head>
+        <meta charset="utf-8" />
+        <title>Supersite - Météo</title>
+        <! -- donne l'adresse vers la feuille de style, elle est dans le repertoire static et se nomme main.css -->
+        <link rel ="stylesheet" type="text/css" href="{{ url_for('static', filename='main.css') }}">
+    </head>
+    
+    <body>
+        <a href="{{ url_for('index') }}"> Accueil </a>
+        <h1 > Météo </h1>
+
+        <div class="container">
+            <div class="meteo-info">
+                <img src={{img_url}}> <br>
+                <b>Ville :</b> {{ville}} <br>
+                <b>Température :</b> {{tmp}}°C <br>
+                <b>Conditions :</b> {{cond}} <br>
+            </div>
+        </div>
+
+        <! -- lien vers la page qui appelle la fonction index -->
+    <br>
+    </body>
+</html>
