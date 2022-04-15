@@ -218,6 +218,6 @@ class labyrinthe:
 
 
 if __name__ == "__main__":
-    width, height = 20, 20
+    width, height = 25, 25
     lab1 = labyrinthe(height, width)
     lab1.dessiner_chemin()
