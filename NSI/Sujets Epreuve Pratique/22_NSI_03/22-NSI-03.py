@@ -10,7 +10,7 @@ class Noeud:
         self.gauche = g
         self.valeur = v
         self.droit = d
-
+ 
     def __str__(self):
         return str(self.valeur)
 
@@ -19,15 +19,15 @@ class Noeud:
         return self.gauche is None and self.droit is None
 
 
-def expression_infixe(e):
-    s = str(e.valeur)
-    if e.gauche is not None:
-        s = f"({expression_infixe(e.gauche)}{s}"
-    s += ")"
-    if e.droit is not None:
-        s = s + expression_infixe(e.droit) + ")"
-    # if e.est_une_feuille():
-    return s
+def expression_infixe(e): 
+    s = ""
+    if e.gauche is not None: 
+        s = '(' + s + expression_infixe(e.gauche) 
+    s = s + str(e.valeur)
+    if e.droit is not None: 
+        s = s + expression_infixe(e.droit)  + ')' 
+    return s 
+ 
 
 
 print(
