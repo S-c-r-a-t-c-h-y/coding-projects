@@ -15,9 +15,9 @@
             </p>
             <form method="GET" action="{{ url_for('meteo') }}">
                 <select name="ville">
-                    <option value="Evian-les-bains">Evian</option>
-                    <option value="thonon-les-bains">Thonon</option>
-                    <option value="chatel-74">Chatel</option>
+                    {% for ville in liste_villes %}
+                    <option value={{ville["url"]}}>{{ville["nom"]}}</option>
+                    {% endfor %}
                 </select>
                 <button type="submit"> selectionner </button>
             </form>

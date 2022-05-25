@@ -13,10 +13,15 @@
 
         <div class="container">
             <div class="meteo-info">
-                <img src={{img_url}}> <br>
+                <div class="icon-meteo">
+                    <img src={{img_url}}> <br>
+                </div>
                 <b>Ville :</b> {{ville}} <br>
                 <b>Température :</b> {{tmp}}°C <br>
                 <b>Conditions :</b> {{cond}} <br>
+                <div class="graphe-tmp">
+                    <img src="/static/{{ville}}.png"> <br>
+                </div>
             </div>
         </div>
 
