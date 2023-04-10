@@ -1,8 +1,0 @@
-lib: [
-  "_build/install/default/lib/nreines/META"
-  "_build/install/default/lib/nreines/dune-package"
-  "_build/install/default/lib/nreines/opam"
-]
-bin: [
-  "_build/install/default/bin/nreines"
-]
