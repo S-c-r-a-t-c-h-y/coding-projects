@@ -13,17 +13,17 @@ print(f"The Description Of The Video Is : {yt.description}")
 
 while True:
 
-	if (YN := str(input("Are You Sure You Want To Install The Video ? (yes / no)\n")).lower()) == "yes" :
-	    ys = yt.streams.get_highest_resolution()
-	    print("Downloading.......")
-	    ys.download("C:\\YT_DOWNLOADS")
-	    print("Download Completed!!")
-	    break
+    if (YN := str(input("Are You Sure You Want To Install The Video ? (yes / no)\n")).lower()) == "yes" :
+        ys = yt.streams.get_highest_resolution()
+        print("Downloading.......")
+        ys.download("C:\\YT_DOWNLOADS")
+        print("Download Completed!!")
+        break
 
-	elif YN == "no" :
-	    print("No Problem")	    
-	    break
+    elif YN == "no" :
+        print("No Problem")	    
+        break
 
-	else :
-	    print("Invalid input, please try again")
-	    
+    else :
+        print("Invalid input, please try again")
+        

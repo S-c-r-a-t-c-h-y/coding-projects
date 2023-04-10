@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+  <title>N-reines (N-reines)</title>
+  <link rel="stylesheet" href=".././odoc.css" />
+  <meta charset="utf-8" />
+  <meta name="generator" content="odoc 2.2.0" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <script src="../highlight.pack.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
+</head>
+
+<body class="odoc">
+  <header class="odoc-preamble">
+    <h1>Module <code><span>N-reines</span></code></h1>
+  </header>
+  <nav class="odoc-toc">
+    <ul>
+      <li><a href="#compte-rendu">Compte rendu</a></li>
+      <li><a href="#documentation-du-code">Documentation du code</a>
+        <ul>
+          <li><a href="#résolution-pour-une-solution-(méthode-classique)">Résolution pour UNE solution (méthode
+              classique)</a></li>
+          <li><a href="#résolution-pour-toutes-les-solutions">Résolution pour TOUTES les solutions</a></li>
+          <li><a href="#résolution-pour-une-solution-(méthode-de-résolution-de-conflits)">Résolution pour UNE solution
+              (méthode de résolution de conflits)</a></li>
+          <li><a href="#programme-principale">Programme principale</a></li>
+        </ul>
+      </li>
+    </ul>
+  </nav>
+  <div class="odoc-content">
+    <h2 id="compte-rendu"><a href="#compte-rendu" class="anchor"></a>Compte rendu</h2>
+    <p>Pour la documentation globale du projet voir <a href="compte_rendu.html">le compte rendu</a>.</p>
+    <h2 id="documentation-du-code"><a href="#documentation-du-code" class="anchor"></a>Documentation du code</h2>
+    <p>Ci-dessous la documentation pour toutes les fonctions du code.</p>
+    <div class="odoc-spec">
+      <div class="spec type anchored" id="type-reine"><a href="#type-reine"
+          class="anchor"></a><code><span><span class="keyword">type</span> reine</span><span> = int * int</span></code>
+      </div>
+      <div class="spec-doc">
+        <p>une reine est représentée par un couple de coordonées <code>(i, j)</code></p>
+      </div>
+    </div>
+    <div class="odoc-spec">
+      <div class="spec value anchored" id="val-cases_prises"><a href="#val-cases_prises"
+          class="anchor"></a><code><span><span class="keyword">val</span> cases_prises : <span><span><a href="#type-reine">reine</a> list</span> <span class="arrow">&#45;&gt;</span></span> <span>int <span class="arrow">&#45;&gt;</span></span> <span>int <span class="arrow">&#45;&gt;</span></span> <span><span>int array</span> <span class="arrow">&#45;&gt;</span></span> <span>int array</span></span></code>
+      </div>
+      <div class="spec-doc">
+        <p><code>cases_prises reines ligne n arr</code> calcul les cases de la ligne <code>ligne</code> pouvant être
+          attaquées par une des reines de <code>reines</code> déjà placées</p>
+        <ul class="at-tags">
+          <li class="parameter"><span class="at-tag">parameter</span> <span class="value">reines</span>
+            <p>une liste des coordonnées des reines déjà placées sur le plateau</p>
+          </li>
+        </ul>
+        <ul class="at-tags">
+          <li class="parameter"><span class="at-tag">parameter</span> <span class="value">ligne</span>
+            <p>ligne pour laquelle on souhaite obtenir les indices des cases prises</p>
+          </li>
+        </ul>
+        <ul class="at-tags">
+          <li class="parameter"><span class="at-tag">parameter</span> <span class="value">n</span>
+            <p>nombre de reines</p>
+          </li>
+        </ul>
+        <ul class="at-tags">
+          <li class="parameter"><span class="at-tag">parameter</span> <span class="value">arr</span>
+            <p>array contenant n nombres, tous initialement à 0</p>
+          </li>
+        </ul>
+        <ul class="at-tags">
+          <li class="returns"><span class="at-tag">returns</span>
+            <p>un array de <code>n</code> nombres valant <code>1</code> si une reine de <code>reines</code> peut
+              attaquer la case à la position <code>(i, ligne)</code> où <code>i</code> est l'indice dans l'array, et
+              <code>0</code> sinon.</p>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div class="odoc-spec">
+      <div class="spec value anchored" id="val-indices_valides"><a href="#val-indices_valides"
+          class="anchor"></a><code><span><span class="keyword">val</span> indices_valides : <span><span><a href="#type-reine">reine</a> list</span> <span class="arrow">&#45;&gt;</span></span> <span>int <span class="arrow">&#45;&gt;</span></span> <span>int <span class="arrow">&#45;&gt;</span></span> <span>int array</span></span></code>
+      </div>
+      <div class="spec-doc">
+        <p><code>indices_valides reines ligne n</code> calcul les indices des cases sur lesquels on peut poser une reine
+          sur la ligne <code>ligne</code> sans que celle ci ne puisse être attaquée par une reine de <code>reines</code>
+        </p>
+        <ul class="at-tags">
+          <li class="parameter"><span class="at-tag">parameter</span> <span class="value">reines</span>
+            <p>une liste des coordonnées des reines déjà placées sur le plateau</p>
+          </li>
+        </ul>
+        <ul class="at-tags">
+          <li class="parameter"><span class="at-tag">parameter</span> <span class="value">ligne</span>
+            <p>ligne pour laquelle on souhaite obtenir les indices valides</p>
+          </li>
+        </ul>
+        <ul class="at-tags">
+          <li class="parameter"><span class="at-tag">parameter</span> <span class="value">n</span>
+            <p>nombre de reines</p>
+          </li>
+        </ul>
+        <ul class="at-tags">
+          <li class="returns"><span class="at-tag">returns</span>
+            <p>un array de tous ces indices</p>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <h3 id="résolution-pour-une-solution-(méthode-classique)"><a
+        href="#résolution-pour-une-solution-(méthode-classique)" class="anchor"></a>Résolution pour UNE solution
+      (méthode classique)</h3>
+    <div class="odoc-spec">
+      <div class="spec value anchored" id="val-solution"><a href="#val-solution"
+          class="anchor"></a><code><span><span class="keyword">val</span> solution : <span>int <span class="arrow">&#45;&gt;</span></span> <span><a href="#type-reine">reine</a> list</span></span></code>
+      </div>
+      <div class="spec-doc">
+        <p><code>solution n</code> calcul une solution au problème des n-reines pour un plateau de <code>n*n</code>.</p>
+        <ul class="at-tags">
+          <li class="parameter"><span class="at-tag">parameter</span> <span class="value">n</span>
+            <p>taille de l'échiquier</p>
+          </li>
+        </ul>
+        <ul class="at-tags">
+          <li class="returns"><span class="at-tag">returns</span>
+            <p>une liste contenant les coordonnées des <code>n</code> reines</p>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div class="odoc-spec">
+      <div class="spec value anchored" id="val-print_solution"><a href="#val-print_solution"
+          class="anchor"></a><code><span><span class="keyword">val</span> print_solution : <span>int <span class="arrow">&#45;&gt;</span></span> <span><span class="xref-unresolved">Stdlib</span>.out_channel <span class="arrow">&#45;&gt;</span></span> unit</span></code>
+      </div>
+      <div class="spec-doc">
+        <p><code>print_solution n</code> affiche dans <code>out_chan</code> le plateau d'échec de <code>n*n</code> avec
+          les <code>n</code> reines placées au bon endroit.</p>
+        <ul class="at-tags">
+          <li class="parameter"><span class="at-tag">parameter</span> <span class="value">n</span>
+            <p>taille de l'échiquier</p>
+          </li>
+        </ul>
+        <ul class="at-tags">
+          <li class="parameter"><span class="at-tag">parameter</span> <span class="value">out_chan</span>
+            <p>channel de sortie sur lequel doit être affiché la solution (stdout ou un fichier)</p>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <h3 id="résolution-pour-toutes-les-solutions"><a href="#résolution-pour-toutes-les-solutions"
+        class="anchor"></a>Résolution pour TOUTES les solutions</h3>
+    <div class="odoc-spec">
+      <div class="spec value anchored" id="val-remove_isomorphismes"><a href="#val-remove_isomorphismes"
+          class="anchor"></a><code><span><span class="keyword">val</span> remove_isomorphismes : <span><span><span><a href="#type-reine">reine</a> list</span> list</span> <span class="arrow">&#45;&gt;</span></span> <span><span><a href="#type-reine">reine</a> list</span> list</span></span></code>
+      </div>
+      <div class="spec-doc">
+        <p><code>remove_isomorphismes sols</code> supprime toutes les solutions isomorphes à d'autres solutions, ne
+          laissant que les solutions de &quot;base&quot;</p>
+        <ul class="at-tags">
+          <li class="parameter"><span class="at-tag">parameter</span> <span class="value">sols</span>
+            <p>la liste de toutes les solutions</p>
+          </li>
+        </ul>
+        <ul class="at-tags">
+          <li class="returns"><span class="at-tag">returns</span>
+            <p>la liste des solutions uniques à isomorphisme près</p>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div class="odoc-spec">
+      <div class="spec value anchored" id="val-solutions"><a href="#val-solutions"
+          class="anchor"></a><code><span><span class="keyword">val</span> solutions : <span>int <span class="arrow">&#45;&gt;</span></span> <span>bool <span class="arrow">&#45;&gt;</span></span> <span><span><a href="#type-reine">reine</a> list</span> list</span></span></code>
+      </div>
+      <div class="spec-doc">
+        <p><code>solutions n unique</code> renvoie une liste de toutes les solutions pour un plateau de
+          <code>n*n</code>, uniques à isomorphisme près si <code>unique=true</code>.</p>
+        <ul class="at-tags">
+          <li class="parameter"><span class="at-tag">parameter</span> <span class="value">n</span>
+            <p>taille de l'échiquier</p>
+          </li>
+        </ul>
+        <ul class="at-tags">
+          <li class="parameter"><span class="at-tag">parameter</span> <span class="value">unique</span>
+            <p>si oui ou non les solutions renvoyées sont uniques</p>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div class="odoc-spec">
+      <div class="spec value anchored" id="val-print_nb_solutions"><a href="#val-print_nb_solutions"
+          class="anchor"></a><code><span><span class="keyword">val</span> print_nb_solutions : <span>int <span class="arrow">&#45;&gt;</span></span> <span>bool <span class="arrow">&#45;&gt;</span></span> <span><span class="xref-unresolved">Stdlib</span>.out_channel <span class="arrow">&#45;&gt;</span></span> unit</span></code>
+      </div>
+      <div class="spec-doc">
+        <p><code>print_nb_solutions n unique out_chan</code> affiche dans <code>out_chan</code> le nombre de solutions
+          pour un plateau de <code>n*n</code>, uniques à isomorphisme près si <code>unique=true</code>.</p>
+        <ul class="at-tags">
+          <li class="parameter"><span class="at-tag">parameter</span> <span class="value">n</span>
+            <p>taille de l'échiquier</p>
+          </li>
+        </ul>
+        <ul class="at-tags">
+          <li class="parameter"><span class="at-tag">parameter</span> <span class="value">unique</span>
+            <p>si oui ou non les solutions affichées sont uniques</p>
+          </li>
+        </ul>
+        <ul class="at-tags">
+          <li class="parameter"><span class="at-tag">parameter</span> <span class="value">out_chan</span>
+            <p>channel de sortie sur lequel doit être affiché la solution (stdout ou un fichier)</p>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div class="odoc-spec">
+      <div class="spec value anchored" id="val-print_solutions"><a href="#val-print_solutions"
+          class="anchor"></a><code><span><span class="keyword">val</span> print_solutions : <span>int <span class="arrow">&#45;&gt;</span></span> <span>bool <span class="arrow">&#45;&gt;</span></span> <span><span class="xref-unresolved">Stdlib</span>.out_channel <span class="arrow">&#45;&gt;</span></span> unit</span></code>
+      </div>
+      <div class="spec-doc">
+        <p><code>print_solutions n unique out_chan</code> affiche dans <code>out_chan</code> toutes les configurations
+          possibles de <code>n</code> reines sur un plateau de <code>n*n</code>, uniques à isomorphisme près si
+          <code>unique=true</code>.</p>
+        <ul class="at-tags">
+          <li class="parameter"><span class="at-tag">parameter</span> <span class="value">n</span>
+            <p>taille de l'échiquier</p>
+          </li>
+        </ul>
+        <ul class="at-tags">
+          <li class="parameter"><span class="at-tag">parameter</span> <span class="value">unique</span>
+            <p>si oui ou non les solutions affichées sont uniques</p>
+          </li>
+        </ul>
+        <ul class="at-tags">
+          <li class="parameter"><span class="at-tag">parameter</span> <span class="value">out_chan</span>
+            <p>channel de sortie sur lequel doit être affiché la solution (stdout ou un fichier)</p>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <h3 id="résolution-pour-une-solution-(méthode-de-résolution-de-conflits)"><a
+        href="#résolution-pour-une-solution-(méthode-de-résolution-de-conflits)" class="anchor"></a>Résolution pour UNE
+      solution (méthode de résolution de conflits)</h3>
+    <div class="odoc-spec">
+      <div class="spec value anchored" id="val-place_n_reines"><a href="#val-place_n_reines"
+          class="anchor"></a><code><span><span class="keyword">val</span> place_n_reines : <span>int <span class="arrow">&#45;&gt;</span></span> <span><a href="#type-reine">reine</a> list</span></span></code>
+      </div>
+      <div class="spec-doc">
+        <p><code>place_n_reines n</code> place <code>n</code> reines aléatoirement sur un plateau de <code>n*n</code>
+        </p>
+        <ul class="at-tags">
+          <li class="parameter"><span class="at-tag">parameter</span> <span class="value">n</span>
+            <p>nombre de reines à placer</p>
+          </li>
+        </ul>
+        <ul class="at-tags">
+          <li class="returns"><span class="at-tag">returns</span>
+            <p>une liste des <code>n</code> reines</p>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div class="odoc-spec">
+      <div class="spec value anchored" id="val-cases_conflit"><a href="#val-cases_conflit"
+          class="anchor"></a><code><span><span class="keyword">val</span> cases_conflit : <span><span>(int * int)</span> <span class="arrow">&#45;&gt;</span></span> <span>int <span class="arrow">&#45;&gt;</span></span> <span><span>(int * int)</span> list</span></span></code>
+      </div>
+      <div class="spec-doc">
+        <p><code>cases_conflit (x, y) n</code> calcul les coordonnées de toutes les cases attaquées par une reine placée
+          aux coordonées <code>(x, y)</code></p>
+        <ul class="at-tags">
+          <li class="parameter"><span class="at-tag">parameter</span> <span class="value">(x,</span>
+            <p>y) les coordonnées <code>x</code> et <code>y</code> de la case dont on souhaite connaître le nombre de
+              conflit</p>
+          </li>
+        </ul>
+        <ul class="at-tags">
+          <li class="parameter"><span class="at-tag">parameter</span> <span class="value">n</span>
+            <p>la taille tu tableau</p>
+          </li>
+        </ul>
+        <ul class="at-tags">
+          <li class="returns"><span class="at-tag">returns</span>
+            <p>une liste de toutes les coordonnées attaquées par la reine</p>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div class="odoc-spec">
+      <div class="spec value anchored" id="val-calculer_conflits"><a href="#val-calculer_conflits"
+          class="anchor"></a><code><span><span class="keyword">val</span> calculer_conflits : <span>int <span class="arrow">&#45;&gt;</span></span> <span><span><a href="#type-reine">reine</a> list</span> <span class="arrow">&#45;&gt;</span></span> int * bool * <span><span>(int * int)</span> list</span></span></code>
+      </div>
+      <div class="spec-doc">
+        <p><code>calculer_conflits n reines</code> calcul les conflits causés par les reines afin de déterminer la reine
+          avec le plus de conflits</p>
+        <ul class="at-tags">
+          <li class="parameter"><span class="at-tag">parameter</span> <span class="value">n</span>
+            <p>la taille de l'échiquier</p>
+          </li>
+        </ul>
+        <ul class="at-tags">
+          <li class="parameter"><span class="at-tag">parameter</span> <span class="value">reines</span>
+            <p>les positions des reines</p>
+          </li>
+        </ul>
+        <ul class="at-tags">
+          <li class="returns"><span class="at-tag">returns</span>
+            <p>l'indice de la reine ayant le plus de conflit, un booléen valant vrai si et seulement si aucun reine
+              n'est dans un conflit et les coordonées des cases en conflit</p>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div class="odoc-spec">
+      <div class="spec value anchored" id="val-resoudre_conflits"><a href="#val-resoudre_conflits"
+          class="anchor"></a><code><span><span class="keyword">val</span> resoudre_conflits : <span>int <span class="arrow">&#45;&gt;</span></span> <span><span><a href="#type-reine">reine</a> list</span> <span class="arrow">&#45;&gt;</span></span> <span><a href="#type-reine">reine</a> list</span></span></code>
+      </div>
+      <div class="spec-doc">
+        <p><code>resoudre_conflits n reines</code> résoud les conflits entre les reines s'il y en a, et recalcul un
+          nouveau set de reines si un extremum local est atteint</p>
+        <ul class="at-tags">
+          <li class="parameter"><span class="at-tag">parameter</span> <span class="value">n</span>
+            <p>la taille de l'échiquier</p>
+          </li>
+        </ul>
+        <ul class="at-tags">
+          <li class="parameter"><span class="at-tag">parameter</span> <span class="value">reines</span>
+            <p>les coordonnées des reines</p>
+          </li>
+        </ul>
+        <ul class="at-tags">
+          <li class="returns"><span class="at-tag">returns</span>
+            <p>une liste des <code>n</code> reines placées sans conflit</p>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div class="odoc-spec">
+      <div class="spec value anchored" id="val-solution_conflits"><a href="#val-solution_conflits"
+          class="anchor"></a><code><span><span class="keyword">val</span> solution_conflits : <span>int <span class="arrow">&#45;&gt;</span></span> <span><a href="#type-reine">reine</a> list</span></span></code>
+      </div>
+      <div class="spec-doc">
+        <p><code>solution_conflits n</code> résoud le problème des n-reines en utilisant une méthode de résolution de
+          conflits</p>
+        <ul class="at-tags">
+          <li class="parameter"><span class="at-tag">parameter</span> <span class="value">n</span>
+            <p>la taille de l'échiquier</p>
+          </li>
+        </ul>
+        <ul class="at-tags">
+          <li class="returns"><span class="at-tag">returns</span>
+            <p>une liste des coordonnées des <code>n</code> reines</p>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div class="odoc-spec">
+      <div class="spec value anchored" id="val-print_solution_conflits"><a href="#val-print_solution_conflits"
+          class="anchor"></a><code><span><span class="keyword">val</span> print_solution_conflits : <span>int <span class="arrow">&#45;&gt;</span></span> <span><span class="xref-unresolved">Stdlib</span>.out_channel <span class="arrow">&#45;&gt;</span></span> unit</span></code>
+      </div>
+      <div class="spec-doc">
+        <p><code>print_solution_conflits n</code> affiche dans <code>out_chan</code> une solution au problème des
+          n-reines obtenue à l'aide d'un algorithme de résolution de conflits</p>
+        <ul class="at-tags">
+          <li class="parameter"><span class="at-tag">parameter</span> <span class="value">n</span>
+            <p>la taille de l'échiquier</p>
+          </li>
+        </ul>
+        <ul class="at-tags">
+          <li class="parameter"><span class="at-tag">parameter</span> <span class="value">out_chan</span>
+            <p>channel de sortie sur lequel doit être affiché la solution (stdout ou un fichier)</p>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <h3 id="programme-principale"><a href="#programme-principale" class="anchor"></a>Programme principale</h3>
+    <div class="odoc-spec">
+      <div class="spec value anchored" id="val-n_reines"><a href="#val-n_reines" class="anchor"></a><code><span><span class="keyword">val</span> n_reines : 
+  <span>int <span class="arrow">&#45;&gt;</span></span>
+  <span>bool <span class="arrow">&#45;&gt;</span></span>
+  <span>bool <span class="arrow">&#45;&gt;</span></span>
+  <span>bool <span class="arrow">&#45;&gt;</span></span>
+  <span>bool <span class="arrow">&#45;&gt;</span></span>
+  <span><span class="xref-unresolved">Stdlib</span>.out_channel <span class="arrow">&#45;&gt;</span></span>
+  <span>bool <span class="arrow">&#45;&gt;</span></span>
+  unit</span></code></div>
+      <div class="spec-doc">
+        <p><code>n_reines n all unique conflit nb out_chan print</code> détermine quelle fonction appeler en fonction
+          des paramètres passés par l'utilisateur. Pour plus de précision sur les paramètres, exécutez
+          <code>./n_reines --help</code></p>
+      </div>
+    </div>
+    <div class="odoc-spec">
+      <div class="spec value anchored" id="val-main"><a href="#val-main"
+          class="anchor"></a><code><span><span class="keyword">val</span> main : unit</span></code></div>
+      <div class="spec-doc">
+        <p>Fonction <code>main</code>, pour obtenir des infos sur l'exécution du programme exécutez
+          <code>./n_reines --help</code></p>
+      </div>
+    </div>
+  </div>
+</body>
+
+</html>

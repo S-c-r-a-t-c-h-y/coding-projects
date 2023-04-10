@@ -1,0 +1,4 @@
+(executable
+ (public_name image_processing)
+ (name main)
+ (libraries image_processing))

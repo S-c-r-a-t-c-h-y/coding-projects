@@ -1,0 +1,8 @@
+lib: [
+  "_build/install/default/lib/sandbox/META"
+  "_build/install/default/lib/sandbox/dune-package"
+  "_build/install/default/lib/sandbox/opam"
+]
+bin: [
+  "_build/install/default/bin/sandbox"
+]

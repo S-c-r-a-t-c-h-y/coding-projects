@@ -1,0 +1,25 @@
+(lang dune 3.7)
+
+(name nreines)
+
+(generate_opam_files true)
+
+; (source
+;  (github username/reponame))
+
+(authors "Mazoyer Amaury")
+
+(license LICENSE)
+
+; (documentation https://url/to/documentation)
+
+(package
+ (name nreines)
+ (synopsis "N queens' problem")
+ (description
+  "A programm giving multiple solutions to the N queens' problem")
+ (depends ocaml dune)
+ (tags
+  (nqueens algorithm)))
+
+; See the complete stanza docs at https://dune.readthedocs.io/en/stable/dune-files.html#dune-project

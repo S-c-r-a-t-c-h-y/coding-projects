@@ -1,13 +1,18 @@
-import os
-cmd = "synchronise le code sur github avec le message ajouts de commande de reconnaissance vocale"
+import enum
 
-if set(["synchronise", "code", "github"]).issubset(commande := cmd.split(" ")):
-    msg = ""
-    if set(["avec", "le", "message"]).issubset(commande):
-        msg = " ".join(commande).split("message ")[-1]
-    current = os.getcwd()
-    os.chdir(r"C:\Users\Personne\Desktop\'Coding Projects'")
-    os.system("git add .")
-    os.system(f'git commit -m "{msg}"')
-    os.system("git push")
-    os.chdir(current)
+
+@enum.unique
+class Engines(enum.Enum):
+    GOOGLE = enum.auto()
+    GOOGLE_CLOUD = enum.auto()
+    BING = enum.auto()
+    HOUNDIFY = enum.auto()
+    IBM = enum.auto()
+    SPHINX = enum.auto()
+    WIT = enum.auto()
+
+
+a = Engines.GOOGLE
+b = 2
+
+print(b in Engines)

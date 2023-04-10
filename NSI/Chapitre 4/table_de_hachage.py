@@ -76,7 +76,7 @@ class HashTable:
 
 table = HashTable()
 
-### Table de hachage avec environ 500000 mots ###
+### Table de hachage avec environ 60000 mots ###
 #################################################
 
 with open("hachage.txt", "r", encoding="utf-8") as f:

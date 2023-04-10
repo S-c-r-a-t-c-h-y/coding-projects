@@ -78,6 +78,11 @@ def main():
         increment = 1
         nombre = nombre_init
 
+        # seq = sequence(nombre, plaques)
+        # if seq is None:
+        #     print("Pas de solution.")
+        #     return
+        
         while (seq := sequence(nombre, plaques)) is None:
             nombre = eval(f"nombre{op}{increment}")
             op = "+" if op == "-" else "-"

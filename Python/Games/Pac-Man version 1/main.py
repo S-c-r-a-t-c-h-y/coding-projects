@@ -2,8 +2,7 @@ from tkinter import *
 import tkinter.messagebox
 import time
 import os
-from playsound import playsound
-from typing import Union, List, Optional, Callable
+from typing import List, Optional, Callable
 from random import choice
 from Astar import *
 
@@ -293,7 +292,7 @@ class Ghost:
             elif self.name == 'clyde': self.target = 1, 20
 
         self.target = 0, self.target[1] if self.target[0] < 0 else 18, self.target[1] if self.target[0] >= 19 else self.target
-        self.target = self.target[0], 0 if self.target[1] < 0 else self.target[0], 21 if if self.target[1] >= 22 else self.target
+        self.target = self.target[0], 0 if self.target[1] < 0 else self.target[0], 21 if self.target[1] >= 22 else self.target
 
     def select_random_direction(self) -> None:
         possible: list = ['up', 'right', 'left', 'down']

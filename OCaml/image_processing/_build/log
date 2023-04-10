@@ -1,0 +1,6 @@
+# dune init project image_processing
+# OCAMLPARAM: unset
+# Shared cache: disabled
+# Workspace root: "/mnt/c/Users/Personne/Desktop/Coding
+# Projects/OCaml/image_processing"
+# Auto-detected concurrency: 12

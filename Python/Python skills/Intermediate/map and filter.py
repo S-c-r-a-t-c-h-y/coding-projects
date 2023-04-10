@@ -1,7 +1,9 @@
-ids = ['id1', 'id2', 'id22', 'id34','id100']
+ids = ["id1", "id2", "id22", "id34", "id100"]
 
-print(sorted(ids)) # alphabetical sorting
-print(sorted(ids, key=lambda x: int(x[2:]))) # usage of a lambda function to specify a key for sorting
+print(sorted(ids))  # alphabetical sorting
+print(
+    sorted(ids, key=lambda x: int(x[2:]))
+)  # usage of a lambda function to specify a key for sorting
 
 
 # the map function runs the function provided in the first parameter
@@ -9,3 +11,7 @@ print(sorted(ids, key=lambda x: int(x[2:]))) # usage of a lambda function to spe
 # and returns a generator
 capital_ids = list(map(lambda x: x.title(), ids))
 print(capital_ids)
+
+t = [1, 2, "3", "4", (5,), 0b1001]
+nums = list(filter(lambda x: isinstance(x, int), t))
+print(nums)

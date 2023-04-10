@@ -185,5 +185,5 @@ class Hanoi(tk.Tk):
 
         
 if __name__ == '__main__':
-    nb_disques = 5
+    nb_disques = 4
     hanoi = Hanoi(nb_disques)

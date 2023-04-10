@@ -1,0 +1,4 @@
+(library
+ (name nreines)
+ (libraries stdlib)
+ (modules Algorithm Display))
