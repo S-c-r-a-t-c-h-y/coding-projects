@@ -62,6 +62,10 @@ __pycache__
 node_modules
 .env
 
+### dune build files ###
+########################
+_build
+
 # ### PyInstaller Artefacts ###
 # #############################
 # *.spec
