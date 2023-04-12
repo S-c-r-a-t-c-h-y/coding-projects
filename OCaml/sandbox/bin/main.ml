@@ -107,28 +107,3 @@ let () =
   for _ = 0 to 10 do
     Printf.printf "%d\n" (next_prime gen)
   done
-
-let pp_int_list outchan l =
-  let rec print_list = function
-    | [] -> ()
-    | [ e ] -> Printf.fprintf outchan "%d" e
-    | e :: q ->
-        Printf.fprintf outchan "%d; " e;
-        print_list q
-  in
-  Printf.fprintf outchan "[";
-  print_list l;
-  Printf.fprintf outchan "]"
-
-let pp_int_array outchan arr =
-  let n = Array.length arr in
-  Printf.fprintf outchan "[|";
-  for i = 0 to n - 2 do
-    Printf.fprintf outchan "%d; " arr.(i)
-  done;
-  if n <> 0 then Printf.fprintf outchan "%d" arr.(n - 1);
-  Printf.fprintf outchan "|]"
-
-let () =
-  let l = [ 1; 2; 3; 4 ] and arr = [| 1; 2; 4 |] in
-  Printf.printf "%a %a\n" pp_int_list l pp_int_array arr

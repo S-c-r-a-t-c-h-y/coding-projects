@@ -1,138 +1,44 @@
 exception Corrupted_image of string
 
-type ppm_pixels =
-  | P1 of int array array
-  | P2 of int array array
-  | P3 of (int * int * int) array array
+type rgb_image = { width : int; height : int; pixels : int array array }
+type chunk_reader_error = [ `End_of_file of int ]
 
-type ppm_image = {
-  width : int;
-  height : int;
-  max_value : int;
-  pixels : ppm_pixels;
-}
+type chunk_reader =
+  [ `Bytes of int | `Close ] -> (string, chunk_reader_error) result
 
-type rgb_image = {
-  width : int;
-  height : int;
-  pixels : (int * int * int) array array;
-}
+let chunk_reader_of_in_channel ich : chunk_reader = function
+  | `Bytes num_bytes -> (
+      try Ok (really_input_string ich num_bytes) with
+      | End_of_file ->
+          let offset = pos_in ich in
+          close_in ich;
+          Error (`End_of_file offset)
+      | e ->
+          close_in ich;
+          raise e)
+  | `Close ->
+      close_in ich;
+      Ok ""
+
+let chunk_reader_of_path fn = chunk_reader_of_in_channel (open_in_bin fn)
+
+let get_bytes (reader : chunk_reader) num_bytes =
+  reader (`Bytes num_bytes) |> function
+  | Ok x -> x
+  | Error (`End_of_file _) -> raise End_of_file
+
+let chunk_char (reader : chunk_reader) = String.get (get_bytes reader 1) 0
+let chunk_byte (reader : chunk_reader) = chunk_char reader |> Char.code
+let close_chunk_reader (reader : chunk_reader) = ignore (reader `Close)
 
 let to_gray_scale arr =
   Array.map (fun x -> Array.map (fun (r, g, b) -> (r + b + g) / 3) x) arr
 
-(* let inverse ppm = {width=ppm.width; height=ppm.height; max_value=ppm.max_value; pixels = } *)
+let to_rgb r g b = (r lsl 16) lor (g lsl 8) lor b
 
-let ppm_to_rgb (ppm : ppm_image) =
-  match ppm.pixels with
-  | P1 pixels ->
-      {
-        width = ppm.width;
-        height = ppm.height;
-        pixels =
-          Array.map
-            (Array.map (fun x -> if x = 1 then (255, 255, 255) else (0, 0, 0)))
-            pixels;
-      }
-  | P2 pixels ->
-      {
-        width = ppm.width;
-        height = ppm.height;
-        pixels =
-          Array.map
-            (Array.map (fun x ->
-                 let v = x * 255 / ppm.max_value in
-                 (v, v, v)))
-            pixels;
-      }
-  | P3 pixels ->
-      {
-        width = ppm.width;
-        height = ppm.height;
-        pixels =
-          Array.map
-            (Array.map (fun (r, g, b) ->
-                 ( r * 255 / ppm.max_value,
-                   g * 255 / ppm.max_value,
-                   b * 255 / ppm.max_value )))
-            pixels;
-      }
+let of_rgb rgb_value =
+  ((rgb_value lsr 16) land 255, (rgb_value lsr 8) land 255, rgb_value land 255)
 
-let parse_ppm ic : ppm_image =
-  let scanner = Scanf.Scanning.from_function (fun () -> input_char ic) in
-  let rec pass_comments () =
-    try
-      Scanf.bscanf scanner "#%[^\n\r]%[\t\n\r]" (fun _ _ -> ());
-      pass_comments ()
-    with _ -> ()
-  in
-
-  (* HEADER PARSING *)
-  let magic = ref "" in
-  let width = ref (-1) and height = ref (-1) in
-  let max_val = ref 1 in
-  pass_comments ();
-  Scanf.bscanf scanner "%s%[\t\n ]" (fun mn _ -> magic := mn);
-  pass_comments ();
-
-  (try Scanf.bscanf scanner "%u%[\t\n ]" (fun w _ -> width := w)
-   with Stdlib.Scanf.Scan_failure _ ->
-     raise (Corrupted_image "PPM: invalid width"));
-
-  (try Scanf.bscanf scanner "%u%[\t\n ]" (fun h _ -> height := h)
-   with Stdlib.Scanf.Scan_failure _ ->
-     raise (Corrupted_image "PPM: invalid height"));
-
-  (if List.mem !magic [ "P2"; "P3" ] then
-     try Scanf.bscanf scanner "%u%1[\t\n ]" (fun mv _ -> max_val := mv)
-     with Stdlib.Scanf.Scan_failure _ ->
-       raise (Corrupted_image "PPM: invalid max_val"));
-
-  (* CONTENT PARSING *)
-  match !magic with
-  | "P1" | "P2" ->
-      let pixels =
-        Array.init !height (fun _ -> Array.init !width (fun _ -> 0))
-      in
-      for y = 0 to !height - 1 do
-        for x = 0 to !width - 1 do
-          try Scanf.bscanf scanner "%d%[\t\n ]" (fun v _ -> pixels.(y).(x) <- v)
-          with Stdlib.Scanf.Scan_failure _ ->
-            raise (Corrupted_image "PPM: Invalid grayscale pixel data")
-        done
-      done;
-      if !magic = "P1" then
-        {
-          width = !width;
-          height = !height;
-          max_value = !max_val;
-          pixels = P1 pixels;
-        }
-      else
-        {
-          width = !width;
-          height = !height;
-          max_value = !max_val;
-          pixels = P2 pixels;
-        }
-  | "P3" ->
-      let pixels =
-        Array.init !height (fun _ -> Array.init !width (fun _ -> (0, 0, 0)))
-      in
-      for y = 0 to !height - 1 do
-        for x = 0 to !width - 1 do
-          Scanf.bscanf scanner "%d%[\t\n ]%d%[\t\n ]%d%[\t\n ]"
-            (fun r _ g _ b _ -> pixels.(y).(x) <- (r, g, b))
-        done
-      done;
-      {
-        width = !width;
-        height = !height;
-        max_value = !max_val;
-        pixels = P3 pixels;
-      }
-  | _ -> raise (Corrupted_image "Invalid PPM format")
-
-let open_ppm img =
-  let ic = open_in img in
-  parse_ppm ic
+let avg_rgb rgb1 rgb2 =
+  let r1, g1, b1 = of_rgb rgb1 and r2, g2, b2 = of_rgb rgb2 in
+  to_rgb ((r1 + r2) / 2) ((g1 + g2) / 2) ((b1 + b2) / 2)
