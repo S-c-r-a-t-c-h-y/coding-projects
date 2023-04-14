@@ -8,8 +8,7 @@ let hande_graph_closing () : unit =
 
 let display_rgb_image (img : rgb_image) ?(scale : float = 1.)
     ?(open_window : bool = true)
-    ?(scaling_algorithm : Resize.algorithm = Resize.Bilinear) (x : int)
-    (y : int) =
+    ?(scaling_algorithm : Resize.algorithm = Resize.Auto) (x : int) (y : int) =
   let resized_img =
     Resize.scale_image ~algorithm:scaling_algorithm ~src:img scale
   in

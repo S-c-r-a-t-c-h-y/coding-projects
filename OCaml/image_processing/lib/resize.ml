@@ -1,6 +1,6 @@
 open Images
 
-type algorithm = Nearest | Bilinear | Box | Bicubic
+type algorithm = Nearest | Bilinear | Box | Bicubic | Auto
 
 (* Nearest neighbor interpolation *)
 let resize_nearest ~(src : rgb_image) (new_width : int) (new_height : int) =
@@ -304,7 +304,7 @@ let resize_bicubic ~(src : rgb_image) ?(a : float = -0.5) (scale : float) =
   done;
   new_img
 
-let scale_image ?(algorithm : algorithm = Bilinear) ~(src : rgb_image)
+let scale_image ?(algorithm : algorithm = Auto) ~(src : rgb_image)
     (scale : float) =
   let new_width = float_of_int src.width *. scale |> int_of_float
   and new_height = float_of_int src.height *. scale |> int_of_float in
@@ -313,3 +313,10 @@ let scale_image ?(algorithm : algorithm = Bilinear) ~(src : rgb_image)
   | Bilinear -> resize_bilinear ~src new_width new_height
   | Box -> resize_box ~src new_width new_height
   | Bicubic -> resize_bicubic ~src scale
+  | Auto ->
+      if scale < 1. then resize_box ~src new_width new_height
+      else if scale = 1. then src
+      else if scale >= 10. && scale < 50. then
+        resize_bilinear ~src new_width new_height
+      else if scale >= 50. then resize_nearest ~src new_width new_height
+      else resize_bicubic ~src scale

@@ -1,4 +1,4 @@
 (library
  (name image_processing)
  (libraries graphics)
- (modules Images Display Resize PPM_images))
+ (modules Images Display Resize PPM_images Transform))
