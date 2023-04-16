@@ -19,6 +19,6 @@ let () =
   Printf.ksprintf Graphics.open_graph " %dx%d" (rgb_img.width * 2)
     rgb_img.height;
   Display.display_rgb_image rgb_img ~scale:1. ~scaling_algorithm:Resize.Auto 0 0;
-  Display.display_rgb_image bright_img ~scale:1. ~scaling_algorithm:Resize.Auto
-    rgb_img.width 0;
+  Display.display_rgb_image sharpened_img ~scale:1.
+    ~scaling_algorithm:Resize.Auto rgb_img.width 0;
   Display.hande_graph_closing ()

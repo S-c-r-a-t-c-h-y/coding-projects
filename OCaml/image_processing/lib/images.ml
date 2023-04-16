@@ -137,3 +137,5 @@ let ( *> ) x y =
     done
   done;
   z
+
+let clamp_color col = max 0 (min 255 col)

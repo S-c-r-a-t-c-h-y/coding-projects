@@ -187,13 +187,13 @@ let convolve src kernel =
         to_rgb
           (Array.map2 (Array.map2 ( *. )) kernel red_matrix
           |> Array.map (Array.fold_left ( +. ) 0.)
-          |> Array.fold_left ( +. ) 0. |> int)
+          |> Array.fold_left ( +. ) 0. |> int |> clamp_color)
           (Array.map2 (Array.map2 ( *. )) kernel green_matrix
           |> Array.map (Array.fold_left ( +. ) 0.)
-          |> Array.fold_left ( +. ) 0. |> int)
+          |> Array.fold_left ( +. ) 0. |> int |> clamp_color)
           (Array.map2 (Array.map2 ( *. )) kernel blue_matrix
           |> Array.map (Array.fold_left ( +. ) 0.)
-          |> Array.fold_left ( +. ) 0. |> int)
+          |> Array.fold_left ( +. ) 0. |> int |> clamp_color)
     done
   done;
   { width; height; pixels = output }
@@ -211,9 +211,7 @@ let gaussian_blur img sigma kernel_size =
   convolve img kernel
 
 let edge img =
-  let kernel =
-    [| [| -1.; -1.; -1. |]; [| -1.; 8.; -1. |]; [| -1.; -1.; -1. |] |]
-  in
+  let kernel = [| [| 0.; -1.; 0. |]; [| -1.; 4.; -1. |]; [| 0.; -1.; 0. |] |] in
   convolve img kernel
 
 let box_blur img =

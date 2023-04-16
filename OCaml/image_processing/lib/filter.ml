@@ -49,9 +49,9 @@ let balance img r g b =
         (Array.map (fun x ->
              let r_, g_, b_ = of_rgb x in
              to_rgb
-               (max 0 (min 255 (r_ + r)))
-               (max 0 (min 255 (g_ + g)))
-               (max 0 (min 255 (b_ + b)))))
+               (clamp_color (r_ + r))
+               (clamp_color (g_ + g))
+               (clamp_color (b_ + b))))
         img.pixels;
   }
 
