@@ -107,7 +107,14 @@ let flip_vertical src =
   done;
   { width = m; height = n; pixels = rotated_mat }
 
-let generate_gaussian_filter (sigma : float) (m : int) (n : int) =
+let generate_gaussian_filter ?(sigma : float = -1.) (ksize : int) =
+  let compute_sigma sigma ksize =
+    if sigma < 0. then (0.3 *. (((float ksize -. 1.) *. 0.5) -. 1.)) +. 0.8
+    else sigma
+  in
+  if ksize mod 2 = 0 then raise (Invalid_argument "kernel size must be odd");
+  let sigma = compute_sigma sigma ksize in
+  let m, n = (ksize, ksize) in
   let m_half = m / 2
   and n_half = n / 2
   and gaussian_filter = Array.init m (fun _ -> Array.make n 0.) in
@@ -122,103 +129,6 @@ let generate_gaussian_filter (sigma : float) (m : int) (n : int) =
     done
   done;
   gaussian_filter
-
-(* let convolution ?(stride : int * int = (1, 1)) ?(dilation : int * int = (1, 1))
-     ?(padding : int * int = (0, 0)) (img : rgb_image)
-     (kernel : float array array) =
-   let add_padding img padding =
-     let n, m = (Array.length img.pixels, Array.length img.pixels.(0))
-     and r, c = padding in
-     let padded_matrix = Array.make_matrix (n + (r * 2)) (m + (c * 2)) 0 in
-     for i = 0 to n - 1 do
-       for j = 0 to m - 1 do
-         padded_matrix.(i + r).(j + c) <- img.pixels.(i).(j)
-       done
-     done;
-     { width = m + (c * 2); height = n + (r * 2); pixels = padded_matrix }
-   in
-
-   let out_size n m n_k m_k stride dilation padding =
-     let n_s, m_s = stride and n_d, m_d = dilation and n_p, m_p = padding in
-     ( (float n
-       +. (2. *. float n_p)
-       -. float n_k
-       -. ((float n_k -. 1.) *. (float n_d -. 1.)))
-       /. float n_s
-       |> Float.floor |> int |> ( + ) 1,
-       (float m
-       +. (2. *. float m_p)
-       -. float m_k
-       -. ((float m_k -. 1.) *. (float m_d -. 1.)))
-       /. float m_s
-       |> Float.floor |> int |> ( + ) 1 )
-   in
-
-   let img = add_padding img padding in
-   let n_p, m_p = (Array.length img.pixels, Array.length img.pixels.(0))
-   and n_k, m_k = (Array.length kernel, Array.length kernel.(0)) in
-   let h_out, w_out = out_size n_p m_p n_k m_k stride dilation padding in
-   let matrix_out = Array.make_matrix h_out w_out 0 in
-   let n_b, m_b = (n_k / 2, m_k / 2) in
-   let n_d, m_d = dilation in
-   let n_s, m_s = stride in
-   let center_x_0, center_y_0 = (n_b * n_d, m_b * m_d) in
-   for i = 0 to h_out - 1 do
-     let center_x = center_x_0 + (i * n_s) in
-     let indices_x =
-       Array.init (2 * n_b) (fun l -> center_x * (l - n_b) * n_d)
-     in
-     for j = 0 to w_out - 1 do
-       let center_y = center_y_0 + (j * m_s) in
-       let indices_y =
-         Array.init (2 * m_b) (fun l -> center_y * (l - m_b) * m_d)
-       in
-       let sub_matrix = filter_matrix img.pixels indices_x indices_y in
-       let red_matrix =
-         Array.map
-           (fun row ->
-             Array.map
-               (fun value ->
-                 let r, _, _ = of_rgb value in
-                 float r)
-               row)
-           sub_matrix
-       and green_matrix =
-         Array.map
-           (fun row ->
-             Array.map
-               (fun value ->
-                 let _, g, _ = of_rgb value in
-                 float g)
-               row)
-           sub_matrix
-       and blue_matrix =
-         Array.map
-           (fun row ->
-             Array.map
-               (fun value ->
-                 let _, _, b = of_rgb value in
-                 float b)
-               row)
-           sub_matrix
-       in
-       matrix_out.(i).(j) <-
-         to_rgb
-           (Array.fold_left
-              (fun acc row -> Array.fold_left ( +. ) 0. row)
-              0. (red_matrix *>. kernel)
-           |> int)
-           (Array.fold_left
-              (fun acc row -> Array.fold_left ( +. ) 0. row)
-              0. (green_matrix *>. kernel)
-           |> int)
-           (Array.fold_left
-              (fun acc row -> Array.fold_left ( +. ) 0. row)
-              0. (blue_matrix *>. kernel)
-           |> int)
-     done
-   done;
-   { width = img.width; height = img.height; pixels = matrix_out } *)
 
 let convolve src kernel =
   let add_padding img padding =
@@ -288,14 +198,16 @@ let convolve src kernel =
   done;
   { width; height; pixels = output }
 
-let normalize kernel =
+let normalize_kernel kernel =
   let sum =
     Array.map (Array.fold_left ( +. ) 0.) kernel |> Array.fold_left ( +. ) 0.
   in
   if sum = 0. then kernel else Array.map (Array.map (fun x -> x /. sum)) kernel
 
-let gaussian_blur img sigma =
-  let kernel = generate_gaussian_filter sigma 5 5 |> normalize in
+let gaussian_blur img sigma kernel_size =
+  let kernel =
+    generate_gaussian_filter ~sigma kernel_size |> normalize_kernel
+  in
   convolve img kernel
 
 let edge img =
@@ -306,7 +218,8 @@ let edge img =
 
 let box_blur img =
   let kernel =
-    [| [| 1.; 1.; 1. |]; [| 1.; 1.; 1. |]; [| 1.; 1.; 1. |] |] |> normalize
+    [| [| 1.; 1.; 1. |]; [| 1.; 1.; 1. |]; [| 1.; 1.; 1. |] |]
+    |> normalize_kernel
   in
   convolve img kernel
 

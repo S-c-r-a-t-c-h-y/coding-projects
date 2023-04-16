@@ -6,6 +6,9 @@ type chunk_reader_error = [ `End_of_file of int ]
 type chunk_reader =
   [ `Bytes of int | `Close ] -> (string, chunk_reader_error) result
 
+type chunk_writer =
+  [ `String of string | `Close ] -> (unit, [ `Write_error ]) result
+
 let chunk_reader_of_in_channel ich : chunk_reader = function
   | `Bytes num_bytes -> (
       try Ok (really_input_string ich num_bytes) with
@@ -22,6 +25,30 @@ let chunk_reader_of_in_channel ich : chunk_reader = function
 
 let chunk_reader_of_path fn = chunk_reader_of_in_channel (open_in_bin fn)
 
+let chunk_writer_of_out_channel och : chunk_writer = function
+  | `String x -> (
+      try Ok (output_string och x)
+      with _ ->
+        close_out och;
+        Error `Write_error)
+  | `Close ->
+      close_out och;
+      Ok ()
+
+let chunk_writer_of_path fn = chunk_writer_of_out_channel (open_out_bin fn)
+
+let chunk_write (och : chunk_writer) (str : string) =
+  match och (`String str) with
+  | Ok () -> ()
+  | Error `Write_error ->
+      raise (Invalid_argument "image processing write error")
+
+let chunk_write_char (och : chunk_writer) ch =
+  chunk_write och (String.make 1 ch)
+
+let chunk_printf : 'x. chunk_writer -> ('x, unit, string, unit) format4 -> 'x =
+ fun och -> Printf.ksprintf (chunk_write och)
+
 let get_bytes (reader : chunk_reader) num_bytes =
   reader (`Bytes num_bytes) |> function
   | Ok x -> x
@@ -30,13 +57,16 @@ let get_bytes (reader : chunk_reader) num_bytes =
 let chunk_char (reader : chunk_reader) = String.get (get_bytes reader 1) 0
 let chunk_byte (reader : chunk_reader) = chunk_char reader |> Char.code
 let close_chunk_reader (reader : chunk_reader) = ignore (reader `Close)
+let close_chunk_writer (och : chunk_writer) = ignore (och `Close)
 let int = int_of_float
 let to_rgb r g b = (r lsl 16) lor (g lsl 8) lor b
 
 let of_rgb rgb_value =
   ((rgb_value lsr 16) land 255, (rgb_value lsr 8) land 255, rgb_value land 255)
 
-let avg_rgb rgb1 rgb2 = (rgb1 + rgb2) lsr 1
+let avg_rgb rgb1 rgb2 =
+  let r1, b1, g1 = of_rgb rgb1 and r2, b2, g2 = of_rgb rgb2 in
+  to_rgb ((r1 + r2) / 2) ((g1 + g2) / 2) ((b1 + b2) / 2)
 
 let split_colors color_matrix =
   let red_matrix =
@@ -71,46 +101,6 @@ let split_colors color_matrix =
 
 let copy_img img =
   { width = img.width; height = img.height; pixels = Array.copy img.pixels }
-
-let inverse_rgb_img img =
-  {
-    width = img.width;
-    height = img.height;
-    pixels =
-      Array.map
-        (fun row -> Array.map (fun col -> col lxor 0xffffff) row)
-        img.pixels;
-  }
-
-let filter_red img =
-  {
-    width = img.width;
-    height = img.height;
-    pixels =
-      Array.map
-        (fun row -> Array.map (fun col -> col land 0xff0000) row)
-        img.pixels;
-  }
-
-let filter_green img =
-  {
-    width = img.width;
-    height = img.height;
-    pixels =
-      Array.map
-        (fun row -> Array.map (fun col -> col land 0x00ff00) row)
-        img.pixels;
-  }
-
-let filter_blue img =
-  {
-    width = img.width;
-    height = img.height;
-    pixels =
-      Array.map
-        (fun row -> Array.map (fun col -> col land 0x0000ff) row)
-        img.pixels;
-  }
 
 let filter_matrix mat inds_x inds_y =
   let filter_array arr inds =
