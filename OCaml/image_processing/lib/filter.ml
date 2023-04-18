@@ -20,6 +20,26 @@ let red img =
         img.pixels;
   }
 
+let red1 img =
+  {
+    width = img.width;
+    height = img.height;
+    pixels =
+      Array.map
+        (fun row -> Array.map (fun col -> col lor 0xff0000) row)
+        img.pixels;
+  }
+
+let red0 img =
+  {
+    width = img.width;
+    height = img.height;
+    pixels =
+      Array.map
+        (fun row -> Array.map (fun col -> col lor 0xff0000 lxor 0xff0000) row)
+        img.pixels;
+  }
+
 let green img =
   {
     width = img.width;
@@ -30,6 +50,26 @@ let green img =
         img.pixels;
   }
 
+let green1 img =
+  {
+    width = img.width;
+    height = img.height;
+    pixels =
+      Array.map
+        (fun row -> Array.map (fun col -> col lor 0x00ff00) row)
+        img.pixels;
+  }
+
+let green0 img =
+  {
+    width = img.width;
+    height = img.height;
+    pixels =
+      Array.map
+        (fun row -> Array.map (fun col -> col lor 0x00ff00 lxor 0x00ff00) row)
+        img.pixels;
+  }
+
 let blue img =
   {
     width = img.width;
@@ -37,6 +77,26 @@ let blue img =
     pixels =
       Array.map
         (fun row -> Array.map (fun col -> col land 0x0000ff) row)
+        img.pixels;
+  }
+
+let blue1 img =
+  {
+    width = img.width;
+    height = img.height;
+    pixels =
+      Array.map
+        (fun row -> Array.map (fun col -> col lor 0x0000ff) row)
+        img.pixels;
+  }
+
+let blue0 img =
+  {
+    width = img.width;
+    height = img.height;
+    pixels =
+      Array.map
+        (fun row -> Array.map (fun col -> col lor 0x0000ff lxor 0x0000ff) row)
         img.pixels;
   }
 

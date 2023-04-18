@@ -7,6 +7,8 @@ let () =
   let red_img = Filter.red rgb_img in
   let green_img = Filter.green rgb_img in
   let blue_img = Filter.blue rgb_img in
+  let blue1_img = Filter.blue1 rgb_img in
+  let green0_img = Filter.green0 rgb_img in
   (* let cropped_img = Transform.crop_img rgb_img 200 200 512 512 in *)
   let rotated_img = Transform.rotate_angle rgb_img 90. in
   let flipped_img = Transform.flip_horizontal rgb_img in
@@ -20,6 +22,6 @@ let () =
   Printf.ksprintf Graphics.open_graph " %dx%d" (rgb_img.width * 2)
     rgb_img.height;
   Display.display_rgb_image rgb_img ~scale:1. ~scaling_algorithm:Resize.Auto 0 0;
-  Display.display_rgb_image embossed_img ~scale:1.
-    ~scaling_algorithm:Resize.Auto rgb_img.width 0;
+  Display.display_rgb_image green0_img ~scale:1. ~scaling_algorithm:Resize.Auto
+    rgb_img.width 0;
   Display.hande_graph_closing ()
