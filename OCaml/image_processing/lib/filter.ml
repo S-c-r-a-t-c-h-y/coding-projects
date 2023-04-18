@@ -40,7 +40,7 @@ let blue img =
         img.pixels;
   }
 
-let balance img r g b =
+let balance ?(r : int = 0) ?(g : int = 0) ?(b : int = 0) img =
   {
     width = img.width;
     height = img.height;
@@ -55,12 +55,12 @@ let balance img r g b =
         img.pixels;
   }
 
-let brighten img amt = balance img amt amt amt
+let brighten img amt = balance img ~r:amt ~g:amt ~b:amt
 
 let vignette img factor =
   let transpose mat =
     let w, h = (Array.length mat.(0), Array.length mat) in
-    let t = Array.make_matrix w h 0. in
+    let t = Array.make_matrix w h mat.(0).(0) in
     for i = 0 to h - 1 do
       for j = 0 to w - 1 do
         t.(j).(i) <- mat.(i).(j)

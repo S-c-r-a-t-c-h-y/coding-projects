@@ -139,3 +139,4 @@ let ( *> ) x y =
   z
 
 let clamp_color col = max 0 (min 255 col)
+(* let clamp_color col = max 0 (min 255 col) *)

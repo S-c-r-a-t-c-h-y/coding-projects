@@ -204,7 +204,7 @@ let normalize_kernel kernel =
   in
   if sum = 0. then kernel else Array.map (Array.map (fun x -> x /. sum)) kernel
 
-let gaussian_blur img sigma kernel_size =
+let gaussian_blur img ?(sigma : float = -1.) kernel_size =
   let kernel =
     generate_gaussian_filter ~sigma kernel_size |> normalize_kernel
   in
@@ -223,4 +223,8 @@ let box_blur img =
 
 let sharpen img =
   let kernel = [| [| 0.; -1.; 0. |]; [| -1.; 5.; -1. |]; [| 0.; -1.; 0. |] |] in
+  convolve img kernel
+
+let emboss img =
+  let kernel = [| [| -2.; -1.; 0. |]; [| -1.; 1.; 1. |]; [| 0.; 1.; 2. |] |] in
   convolve img kernel
